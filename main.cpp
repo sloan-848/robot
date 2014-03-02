@@ -28,6 +28,9 @@ FEHServo UDservo(FEHServo::Servo1);
 FEHEncoder leftEncoder(FEHIO::P1_0);
 FEHEncoder rightEncoder(FEHIO::P1_1);
 
+//buttonboard initialization
+ButtonBoard buttons (FEHIO::Bank3);
+
 void moveForward(float distance){
     int motorPercent= 50;
 

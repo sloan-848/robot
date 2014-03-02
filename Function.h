@@ -1,34 +1,59 @@
-#ifndef FUNCTION_H
-#define FUNCTION_H
 #include <math.h>
 #include <FEHIO.h>
+#include <FEHServo.h>
 #include <FEHMotor.h>
+#include <FEHLCD.h>
 
-/* Moves the robot from the back wall of the bottom course to the front of the oven
- *   - Includes Turn
- *   - Does not use encoders
- *   - Non-scientific timing used to control motors
+#ifndef FUNCTION_H
+#define FUNCTION_H
+
+
+/* Assist programmer in finding correct servo
+ * angles for a desired arm movement
  */
-int moveUpRamp(FEHMotor leftMotor, FEHMotor rightMotor)
-{
+void findAngle(FEHServo LRservo, FEHServo UDservo, ButtonBoard myButtons){
+    bool finished = false;
+    int LRangle = 90;
+    int UDangle = 90;
 
-    //Moving Forward
-    leftMotor.SetPercent(70);
-    rightMotor.SetPercent(70);
-    Sleep(4900);
+    LRservo.SetDegree(LRangle);
+    UDservo.SetDegree(UDangle);
 
-    //Turning Left
-    leftMotor.SetPercent(0);
-    Sleep(1300);
+    while(!finished){
+        //print menu
+        LCD.WriteLine();
+        LCD.WriteLine("Press button to select servo: ");
 
-    //Moving Forward
-    leftMotor.SetPercent(70);
-    rightMotor.SetPercent(70);
-    Sleep(4000);
+        //wait for input
+        while(!myButtons.LeftPressed()&&!myButtons.MiddlePressed()&&!myButtons.RightPressed()){}
 
-    //Movement Finished
-    leftMotor.SetPercent(0);
-    rightMotor.SetPercent(0);
+        //decision tree
+        if(myButtons.LeftPressed()){
+            LCD.WriteLine("UD servo selected. Please release button.");
+            Sleep(1.0);
+            while(){
+                LCD.Clear(FEHLCD::Black);
+                LCD.Write("UD servo angle: ");
+                LCD.WriteLine(UDangle);
+                //wait for input
+                while(!myButtons.LeftPressed()&&!myButtons.RightPressed()){}
+                if(myButtons.LeftPressed()){
+
+                }
+                else if(myButtons.RightPressed()){}
+            }
+
+        }
+        else if(myButtons.MiddlePressed()){
+            finished = true;
+        }
+        else if(myButtons.RightPressed()){
+            /* TODO:
+             *   -Mirror code from myButtons.LeftPressed()
+             */
+        }
+
+    }
 }
 
 /* Evaluates the input from the CDS sensor
