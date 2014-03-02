@@ -34,6 +34,7 @@ void moveForward(float distance){
     leftEncoder.ResetCounts();
     rightEncoder.ResetCounts();
 
+
     int estCounts = (TOTALCOUNTS*distance)/(2*PI*WHEELRADIUS);
 
     leftMotor.SetPercent(motorPercent);
@@ -159,138 +160,13 @@ int main(void)
     Sleep(2.0);
     moveForward(30);
 
-    /*
-    LCD.WriteLine("Lower Arm.");
-    UDservo.SetDegree(30);
-    Sleep(1.0);
-    LCD.WriteLine("Move Back.");
-    moveBackward(4);
-    Sleep(1.0);
-    LCD.WriteLine("Move Arm Up.");
-    UDservo.SetDegree(110);
-    LCD.WriteLine("Turning Left - 180");
-    turnRight(140);
-    Sleep(2.0);
-    LCD.WriteLine("Move Backwards");
-    moveBackward(4);
-    LCD.WriteLine("Lowering Arm.");
-    UDservo.SetDegree(10);
-    Sleep(1.0);
-    LCD.WriteLine("Move Forward.");
-    moveForward(3);
-    LCD.WriteLine("Raise Arm Slightly.");
-    UDservo.SetDegree(25);
-    moveBackward(7);
-*/
-
-
-
-
-
-
-
-
-
-
-
-        /*
-    //press button
-    LRservo.SetDegree(0);
-    Sleep(1000);
-    LRservo.SetDegree(180);
-    Sleep(500);
-
-
-
-    //move forward to parallel with switch
-    LCD.Clear(CLEARCOLOR);
-    LCD.WriteLine("Keep moving forward!");
-    leftMotor.SetPercent(50);
-    rightMotor.SetPercent(50);
-    Sleep(10.0);
-
-
-    //turn
-    LCD.Clear(CLEARCOLOR);
-    LCD.WriteLine("Start Turning");
-    leftMotor.SetPercent(0);
-    Sleep(2.8);
-
-
-    LCD.WriteLine("Flip right");
-    UDservo.SetDegree(40);
-    LRservo.SetDegree(0);
-    Sleep(1.0);
-    //move forward
-    leftMotor.SetPercent(50);
-    rightMotor.SetPercent(50);
-    Sleep(1.0);
-
-    leftMotor.SetPercent(0);
-    rightMotor.SetPercent(0);
-
-    //flip switch
-    LCD.WriteLine("Flip left");
-    LRservo.SetDegree(60);
-    Sleep(1.0);
-
-    LRservo.SetDegree(30);
-    UDservo.SetDegree(110);
-
-    //turn
-    LCD.Clear(CLEARCOLOR);
-    LCD.WriteLine("Start Turning");
-    leftMotor.SetPercent(50);
-    Sleep(3.0);
-
-    //move forward
-    leftMotor.SetPercent(50);
-    rightMotor.SetPercent(50);
-    LCD.Clear(CLEARCOLOR);
-    LCD.WriteLine("Keep moving forward!");
-    Sleep(2.0);
-    leftMotor.SetPercent(0);
-    rightMotor.SetPercent(0);
-
-    LCD.Clear(CLEARCOLOR);
-    LCD.WriteLine("Touching Skid.");
-
-    //touch skid
-    LRservo.SetDegree(90);
-    Sleep(1.0);
-    UDservo.SetDegree(0);
-    Sleep(2.0);
-
-    LCD.WriteLine("Touching pin.");
-    //touch pin
-    UDservo.SetDegree(90);
-    Sleep(1.0);
-    LRservo.SetDegree(0);
-    Sleep(1.0);
-    UDservo.SetDegree(50);
-    Sleep(1.0);
-
-    leftMotor.SetPercent(50);
-    Sleep(1.0);
-    rightMotor.SetPercent(30);
-    Sleep(4.0);
-
-
-    leftMotor.SetPercent(0);
-    rightMotor.SetPercent(0);
-    leftMotor.SetPercent(0);
-    rightMotor.SetPercent(0);
-    LCD.WriteLine("It is Finished.");
-
-
-
+    //celebrate
     while(true){
         UDservo.SetDegree(0);
         Sleep(800);
         UDservo.SetDegree(40);
         Sleep(800);
     }
- */
     return 0;
 }
 
