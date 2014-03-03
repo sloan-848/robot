@@ -36,32 +36,54 @@ void Function::findAngle(FEHServo LRservo, FEHServo UDservo, ButtonBoard myButto
         if(myButtons.LeftPressed()){
             LCD.WriteLine("UD servo selected. Please release button.");
             Sleep(1.0);
-            while(true){
+            bool innerFinish = false;
+            while(!innerFinish){
                 LCD.Clear(FEHLCD::Black);
                 LCD.Write("UD servo angle: ");
                 LCD.WriteLine(UDangle);
+                UDservo.SetDegree(UDangle);
                 //wait for input
-                while(!myButtons.LeftPressed()&&!myButtons.RightPressed());
+                while(!myButtons.LeftPressed()&&!myButtons.MiddlePressed()&&!myButtons.RightPressed());
                 if(myButtons.LeftPressed()){
                     UDangle--;
                 }
                 else if(myButtons.MiddlePressed()){
-                    break;
+                    innerFinish = true;
                 }
                 else if(myButtons.RightPressed()){
                     UDangle++;
                 }
                 Sleep(.03);
             }
+            finished = false;
 
         }
         else if(myButtons.MiddlePressed()){
             finished = true;
         }
         else if(myButtons.RightPressed()){
-            /* TODO:
-             *   -Mirror code from myButtons.LeftPressed()
-             */
+            LCD.WriteLine("LR servo selected. Please release button.");
+            Sleep(1.0);
+            bool innerFinish = false;
+            while(!innerFinish){
+                LCD.Clear(FEHLCD::Black);
+                LCD.Write("LR servo angle: ");
+                LCD.WriteLine(LRangle);
+                UDservo.SetDegree(LRangle);
+                //wait for input
+                while(!myButtons.LeftPressed()&&!myButtons.MiddlePressed()&&!myButtons.RightPressed());
+                if(myButtons.LeftPressed()){
+                    LRangle--;
+                }
+                else if(myButtons.MiddlePressed()){
+                    innerFinish = true;
+                }
+                else if(myButtons.RightPressed()){
+                    LRangle++;
+                }
+                Sleep(.03);
+            }
+            finished = false;
         }
 
         /*
