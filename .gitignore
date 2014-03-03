@@ -1,0 +1,4 @@
+# ignore products of compilation
+*.o
+*.d
+*.s19
