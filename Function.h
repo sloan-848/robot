@@ -3,15 +3,19 @@
 #include <FEHServo.h>
 #include <FEHMotor.h>
 #include <FEHLCD.h>
+#include <FEHUtility.h>
 
-#ifndef FUNCTION_H
-#define FUNCTION_H
+#ifndef FUNCTION_CPP
+#define FUNCTION_CPP
 
+class Function{
+public:
+    void findAngle(FEHServo LRservo, FEHServo UDservo, ButtonBoard myButtons);
+    int checkCDS(AnalogInputPin cdsCell);
+    int myNum;
+};
 
-/* Assist programmer in finding correct servo
- * angles for a desired arm movement
- */
-void findAngle(FEHServo LRservo, FEHServo UDservo, ButtonBoard myButtons){
+void Function::findAngle(FEHServo LRservo, FEHServo UDservo, ButtonBoard myButtons){
     bool finished = false;
     int LRangle = 90;
     int UDangle = 90;
@@ -21,26 +25,33 @@ void findAngle(FEHServo LRservo, FEHServo UDservo, ButtonBoard myButtons){
 
     while(!finished){
         //print menu
-        LCD.WriteLine();
+        LCD.Clear(FEHLCD::Black);
+        LCD.WriteLine("");
         LCD.WriteLine("Press button to select servo: ");
 
         //wait for input
-        while(!myButtons.LeftPressed()&&!myButtons.MiddlePressed()&&!myButtons.RightPressed()){}
+        while(!myButtons.LeftPressed()&&!myButtons.MiddlePressed()&&!myButtons.RightPressed());
 
         //decision tree
         if(myButtons.LeftPressed()){
             LCD.WriteLine("UD servo selected. Please release button.");
             Sleep(1.0);
-            while(){
+            while(true){
                 LCD.Clear(FEHLCD::Black);
                 LCD.Write("UD servo angle: ");
                 LCD.WriteLine(UDangle);
                 //wait for input
-                while(!myButtons.LeftPressed()&&!myButtons.RightPressed()){}
+                while(!myButtons.LeftPressed()&&!myButtons.RightPressed());
                 if(myButtons.LeftPressed()){
-
+                    UDangle--;
                 }
-                else if(myButtons.RightPressed()){}
+                else if(myButtons.MiddlePressed()){
+                    break;
+                }
+                else if(myButtons.RightPressed()){
+                    UDangle++;
+                }
+                Sleep(.03);
             }
 
         }
@@ -53,6 +64,19 @@ void findAngle(FEHServo LRservo, FEHServo UDservo, ButtonBoard myButtons){
              */
         }
 
+        /*
+        //print end confirmation
+        LCD.Clear(FEHLCD::Black);
+        LCD.WriteLine("Press middle button to continue, either of the other buttons to end.");
+        while(!myButtons.LeftPressed()&&!myButtons.MiddlePressed()&&!myButtons.RightPressed());
+
+        if(myButtons.MiddlePressed()){
+            finished = true;
+        }
+        else{
+            finished = false;
+        }
+        */
     }
 }
 
@@ -60,7 +84,7 @@ void findAngle(FEHServo LRservo, FEHServo UDservo, ButtonBoard myButtons){
  *   - Returns value between 0 and 100
  *   - Representative of the percentage of light
  */
-int checkCDS(AnalogInputPin cdsCell){
+int Function::checkCDS(AnalogInputPin cdsCell){
     int cdsPercentage = (cdsCell.Value() / 3.3) * 100;
     return cdsPercentage;
     Sleep(200);
@@ -73,4 +97,4 @@ int checkCDS(AnalogInputPin cdsCell){
  */
 
 
-#endif // FUNCTION_H
+#endif // FUNCTION_CPP

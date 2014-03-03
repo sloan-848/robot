@@ -123,6 +123,8 @@ int main(void)
     LCD.Clear(CLEARCOLOR);
     LCD.SetFontColor(FONTCOLOR);
 
+    Function f;
+
     //calibrate servos
     LRservo.SetMin(500); //right-most
     LRservo.SetMax(2366); //left-most
@@ -135,17 +137,20 @@ int main(void)
      *int ovenPresses = rps.Oven();
      */
 
+    f.findAngle(LRservo,UDservo,buttons);
+
+    Sleep(2.0);
     //move arm to straight
     LRservo.SetDegree(30);
     UDservo.SetDegree(30);
 
 
     LCD.WriteLine("Waiting for the Light!");
-    int cdsVal = checkCDS(cdsCell);
+    int cdsVal = f.checkCDS(cdsCell);
     while(cdsVal > 9){
         LCD.Clear(CLEARCOLOR);
         LCD.WriteLine(cdsVal);
-        cdsVal = checkCDS(cdsCell);
+        cdsVal = f.checkCDS(cdsCell);
     }
 
     LCD.WriteLine("Move Forward.");
