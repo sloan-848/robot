@@ -127,7 +127,7 @@ int main(void)
     Robot hal;
     hal.checkCDS();
     while(true){
-        LCD.WriteLine(hal.checkCds());
+        LCD.WriteLine("1");
         Sleep(.1);
     }
     Function f;

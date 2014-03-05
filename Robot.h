@@ -1,15 +1,12 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 #include <math.h>
-/*
 #include <FEHIO.h>
 #include <FEHServo.h>
 #include <FEHMotor.h>
 #include <FEHLCD.h>
 #include <FEHUtility.h>
 #include <FEHWONKA.h>
-*/
-#include "robot.cpp"
 
 class Robot{
 public:

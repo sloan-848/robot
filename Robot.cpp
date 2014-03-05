@@ -1,15 +1,10 @@
 #include "robot.h"
-#include <FEHIO.h>
-#include <FEHServo.h>
-#include <FEHMotor.h>
-#include <FEHLCD.h>
-#include <FEHUtility.h>
-#include <FEHWONKA.h>
+
 
 /*Constructor for Robot Object
  *Initializes values for Robot
  */
-void Robot::Robot(){
+Robot::Robot(){
     //Set values to pointers
     leftMotor = new FEHMotor(FEHMotor::Motor0);
     rightMotor = new FEHMotor(FEHMotor::Motor1);
