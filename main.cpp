@@ -1,9 +1,10 @@
-#include <FEHLCD.h>
+/*#include <FEHLCD.h>
 #include <FEHIO.h>
 #include <FEHUtility.h>
 #include <FEHMotor.h>
 #include <FEHWONKA.h>
-#include <FEHServo.h>
+#include <FEHServo.h>*/
+#include "robot.h"
 #include "Function.h"
 
 #define FONTCOLOR FEHLCD::White
@@ -123,7 +124,14 @@ int main(void)
     LCD.Clear(CLEARCOLOR);
     LCD.SetFontColor(FONTCOLOR);
 
+    Robot hal;
+    hal.checkCDS();
+    while(true){
+        LCD.WriteLine(hal.checkCds());
+        Sleep(.1);
+    }
     Function f;
+
 
     //calibrate servos
     LRservo.SetMin(500); //right-most
