@@ -23,14 +23,21 @@ Robot::Robot(){
     switch2 = new DigitalInputPin(FEHIO::P2_1);
     switch3 = new DigitalInputPin(FEHIO::P2_2);
 
+    lightValue = 10;
+    PI = 3.14159265;
+    TOTALCOUNTS = 20;
+    WHEELRADIUS = 1.35;
+
     //Calibrate servos
     LRservo->SetMin(500);
     LRservo->SetMax(2366);
     UDservo->SetMin(500);
     UDservo->SetMax(2328);
 
-    rps.InitializeMenu();
-    rps.Enable();
+    /*
+    rps->InitializeMenu();
+    rps->Enable();
+    */
 
     LCD.WriteLine("Initialized robot");
 }
@@ -138,9 +145,10 @@ void Robot::moveForward(float distance){
     int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     //while the average counts between the wheels are less than the final desired count
     while(avgCounts < estCounts){
-        LCD.Write("Left to right: ");
-        LCD.WriteLine(leftEncoder->Counts() - rightEncoder->Counts());
+        //LCD.Write("Left to right: ");
+        //LCD.WriteLine(leftEncoder->Counts() - rightEncoder->Counts());
         //if still in first stage, ramp up
+        /*
         if (avgCounts < 10){
             leftMotor->SetPercent(motorPercent*(avgCounts+1)/10.0);
             rightMotor->SetPercent(motorPercent*(avgCounts+1)/10.0);
@@ -150,10 +158,14 @@ void Robot::moveForward(float distance){
             leftMotor->SetPercent(motorPercent*(estCounts - avgCounts));
             rightMotor->SetPercent(motorPercent*(estCounts - avgCounts));
         }
+        */
         //normal run
-        else{
-            rightMotor->SetPercent(motorPercent*(leftEncoder->Counts() - rightEncoder->Counts())*.05);
+        if(avgCounts > 5){
+            rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()-1) - rightEncoder->Counts()));
         }
+        avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+        LCD.WriteLine(avgCounts);
+
     }
     //stop wheel movement
     leftMotor->SetPercent(0);
@@ -161,12 +173,48 @@ void Robot::moveForward(float distance){
 }
 
 void Robot::moveBackward(float distance){
-    /*TODO:
-      Refine code for moveForward(), then modify to move backwards()
-     */
+    int motorPercent= -50;
+
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
+
+    int estCounts = (TOTALCOUNTS*distance)/(2*PI*WHEELRADIUS);
+
+    leftMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(motorPercent+5);
+
+    int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+    //while the average counts between the wheels are less than the final desired count
+    while(avgCounts < estCounts){
+        //LCD.Write("Left to right: ");
+        //LCD.WriteLine(leftEncoder->Counts() - rightEncoder->Counts());
+        //if still in first stage, ramp up
+        /*
+        if (avgCounts < 10){
+            leftMotor->SetPercent(motorPercent*(avgCounts+1)/10.0);
+            rightMotor->SetPercent(motorPercent*(avgCounts+1)/10.0);
+        }
+        //if coming to the end, slow down
+        else if(avgCounts > estCounts - 10){
+            leftMotor->SetPercent(motorPercent*(estCounts - avgCounts));
+            rightMotor->SetPercent(motorPercent*(estCounts - avgCounts));
+        }
+        */
+        //normal run
+        if(avgCounts > 5){
+            rightMotor->SetPercent(motorPercent+(leftEncoder->Counts() - rightEncoder->Counts()));
+        }
+        avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+        LCD.WriteLine(avgCounts);
+
+    }
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
 }
 
-void Robot::turnLeft(int degrees){
+/*void Robot::turnLeft(int degrees){
     int motorPercent= 50;
 
     leftEncoder->ResetCounts();
@@ -178,21 +226,30 @@ void Robot::turnLeft(int degrees){
     if(finalDeg < 0){
         finalDeg += 180;
     }
+    LCD.Write("Final: ");
+    LCD.WriteLine(finalDeg);
+    Sleep(.5);
+    leftMotor->SetPercent((-1)*motorPercent);
+    rightMotor->SetPercent(motorPercent);
 
-    while(leftEncoder->Counts() < 5){
-        leftMotor->SetPercent((-1)*motorPercent*(leftEncoder->Counts()+1)/5.0);
-        rightMotor->SetPercent(motorPercent*(leftEncoder->Counts()+1)/5.0);
-    }
     while(rps->Heading() != finalDeg){
-        //wait
+        LCD.Write("Current: ");
+        LCD.Write(rps->Heading());
     }
 
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
 
+}*/
+void Robot::turnLeft(int time){
+    leftMotor->SetPercent(-50);
+    rightMotor->SetPercent(50);
+    Sleep(time);
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
 }
-
+/*
 void Robot::turnRight(int degrees){
     int motorPercent= 50;
 
@@ -215,6 +272,13 @@ void Robot::turnRight(int degrees){
     }
 
     //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+}*/
+void Robot::turnRight(int time){
+    leftMotor->SetPercent(50);
+    rightMotor->SetPercent(-50);
+    Sleep(time);
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
 }

@@ -1,6 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 #include <math.h>
+//#include <FEHIO.h>
 #include <FEHIO.h>
 #include <FEHServo.h>
 #include <FEHMotor.h>
@@ -16,11 +17,11 @@ public:
     int checkCDS();
     void moveForward(float distance);
     void moveBackward(float distance);
-    void turnLeft(int degrees);
+    void turnLeft(int time);
     void turnRight(int degrees);
     void setArmAngle(int LRangle, int UDangle);
 
-    int lightValue = 10;
+    int lightValue;
 
 private:
     //initialize pointers to all objects
@@ -41,9 +42,9 @@ private:
     DigitalInputPin* switch2;
     DigitalInputPin* switch3;
 
-    float PI = 3.14159265;
-    int TOTALCOUNTS = 20;
-    float WHEELRADIUS = 1.35;
+    float PI;
+    int TOTALCOUNTS;
+    float WHEELRADIUS;
 
 };
 #endif // ROBOT_H
