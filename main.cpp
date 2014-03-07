@@ -125,64 +125,30 @@ int main(void)
     LCD.SetFontColor(FONTCOLOR);
 
     Robot hal;
-    hal.checkCDS();
-    while(true){
-        LCD.WriteLine("1");
-        Sleep(.1);
-    }
-    Function f;
 
+    hal.setArmAngle(160,50);
 
-    //calibrate servos
-    LRservo.SetMin(500); //right-most
-    LRservo.SetMax(2366); //left-most
-    UDservo.SetMin(500); //on the ground
-    UDservo.SetMax(2328); //in the air
-
-    /*
-     *rps.InitializeMenu();
-     *rps.Enable();
-     *int ovenPresses = rps.Oven();
-     */
-
-    f.findAngle(LRservo,UDservo,buttons);
-
-    Sleep(2.0);
-    //move arm to straight
-    LRservo.SetDegree(30);
-    UDservo.SetDegree(30);
-
-
-    LCD.WriteLine("Waiting for the Light!");
-    int cdsVal = f.checkCDS(cdsCell);
-    while(cdsVal > 9){
-        LCD.Clear(CLEARCOLOR);
-        LCD.WriteLine(cdsVal);
-        cdsVal = f.checkCDS(cdsCell);
+    LCD.WriteLine("Waiting for the light.");
+    while(hal.checkCDS() < hal.lightValue){
+        //wait patiently
     }
 
-    LCD.WriteLine("Move Forward.");
-    moveForward(34);
-    LCD.WriteLine("Moved to Pin.");
-    Sleep(3.0);
-    LCD.WriteLine("Move Arm Up.");
-    UDservo.SetDegree(60);
-    Sleep(1.0);
-    LCD.WriteLine("Move Backward");
-    moveBackward(3);
-    Sleep(1.0);
-    LCD.WriteLine("Turning Right.");
-    turnRight(100);
-    Sleep(2.0);
-    moveForward(30);
+    LCD.WriteLine("Moving to in-front of skid.");
+    hal.moveForward(20);
+    LCD.WriteLine("Turning Left.");
+    hal.turnLeft(90);
+    LCD.WriteLine("Lowering Arm.");
+    hal.setArmAngle(160,20);
+    LCD.WriteLine("Moving into position");
+    hal.moveForward(3);
+    LCD.WriteLine("Raising Arm.");
+    hal.setArmAngle(160,30);
+    LCD.WriteLine("Turning Right 20 degrees.");
+    hal.turnRight(20);
+    LCD.WriteLine("Moving backwards");
+    //move backwards
 
-    //celebrate
-    while(true){
-        UDservo.SetDegree(0);
-        Sleep(800);
-        UDservo.SetDegree(40);
-        Sleep(800);
-    }
+
     return 0;
 }
 

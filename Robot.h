@@ -15,6 +15,12 @@ public:
     void findAngle();
     int checkCDS();
     void moveForward(float distance);
+    void moveBackward(float distance);
+    void turnLeft(int degrees);
+    void turnRight(int degrees);
+    void setArmAngle(int LRangle, int UDangle);
+
+    int lightValue = 10;
 
 private:
     //initialize pointers to all objects
@@ -32,5 +38,10 @@ private:
     FEHEncoder* rightEncoder;
 
     ButtonBoard* myButtons;
+
+    float PI = 3.14159265;
+    int TOTALCOUNTS = 20;
+    float WHEELRADIUS = 1.35;
+
 };
 #endif // ROBOT_H

@@ -27,6 +27,9 @@ Robot::Robot(){
     UDservo->SetMin(500);
     UDservo->SetMax(2328);
 
+    rps.InitializeMenu();
+    rps.Enable();
+
     LCD.WriteLine("Initialized robot");
 }
 
@@ -116,37 +119,105 @@ int Robot::checkCDS(){
 /*Move forward a specific distance
  *distance given in INCHES
  *because we're in AMERICA
- *Land of the Free. Home of the Brave.
+ *Land of the Free. Home of the Brave.*/
 
 void Robot::moveForward(float distance){
     int motorPercent= 50;
 
-    leftEncoder.ResetCounts();
-    rightEncoder.ResetCounts();
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
 
 
     int estCounts = (TOTALCOUNTS*distance)/(2*PI*WHEELRADIUS);
 
-    leftMotor.SetPercent(motorPercent);
-    rightMotor.SetPercent(motorPercent-5);
+    leftMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(motorPercent-5);
 
-    while((leftEncoder.Counts() < estCounts )||(rightEncoder.Counts() < estCounts)){
-        LCD.Write("Left: ");
-        LCD.Write(leftEncoder.Counts());
-        LCD.Write("  -  Right: ");
-        LCD.WriteLine(rightEncoder.Counts());
-        if(leftEncoder.Counts() - rightEncoder.Counts() > 2){
-            rightMotor.SetPercent(motorPercent + 10);
+    int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+    //while the average counts between the wheels are less than the final desired count
+    while(avgCounts < estCounts){
+        LCD.Write("Left to right: ");
+        LCD.WriteLine(leftEncoder->Counts() - rightEncoder->Counts());
+        //if still in first stage, ramp up
+        if (avgCounts < 10){
+            leftMotor->SetPercent(motorPercent*(avgCounts+1)/10.0);
+            rightMotor->SetPercent(motorPercent*(avgCounts+1)/10.0);
         }
-        else if(leftEncoder.Counts() - rightEncoder.Counts() < -2){
-            rightMotor.SetPercent(motorPercent - 10);
+        //if coming to the end, slow down
+        else if(avgCounts > estCounts - 10){
+            leftMotor->SetPercent(motorPercent*(estCounts - avgCounts));
+            rightMotor->SetPercent(motorPercent*(estCounts - avgCounts));
         }
+        //normal run
         else{
-            rightMotor.SetPercent(motorPercent);
+            rightMotor->SetPercent(motorPercent*(leftEncoder->Counts() - rightEncoder->Counts())*.05);
         }
     }
-
-    leftMotor.SetPercent(0);
-    rightMotor.SetPercent(0);
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
 }
-*/
+
+void Robot::moveBackward(float distance){
+    /*TODO:
+      Refine code for moveForward(), then modify to move backwards()
+     */
+}
+
+void Robot::turnLeft(int degrees){
+    int motorPercent= 50;
+
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
+    int startDeg = rps->Heading();
+
+    int finalDeg = startDeg-degrees;
+    if(finalDeg < 0){
+        finalDeg += 180;
+    }
+
+    while(leftEncoder->Counts() < 5){
+        leftMotor->SetPercent((-1)*motorPercent*(leftEncoder->Counts()+1)/5.0);
+        rightMotor->SetPercent(motorPercent*(leftEncoder->Counts()+1)/5.0);
+    }
+    while(rps->Heading() != finalDeg){
+        //wait
+    }
+
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+
+}
+
+void Robot::turnRight(int degrees){
+    int motorPercent= 50;
+
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
+    int startDeg = rps->Heading();
+
+    int finalDeg = startDeg + degrees;
+    if(finalDeg >= 180){
+        finalDeg -= 180;
+    }
+
+    while(leftEncoder->Counts() < 5){
+        leftMotor->SetPercent(motorPercent*(leftEncoder->Counts()+1)/5.0);
+        rightMotor->SetPercent((-1)*motorPercent*(leftEncoder->Counts()+1)/5.0);
+    }
+    while(rps->Heading() != finalDeg){
+        //wait
+    }
+
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+}
+
+void Robot::setArmAngle(int LRangle, int UDangle){
+    LRservo->SetDegree(LRangle);
+    UDservo->SetDegree(UDangle);
+}
