@@ -37,7 +37,9 @@ private:
     FEHEncoder* leftEncoder;
     FEHEncoder* rightEncoder;
 
-    ButtonBoard* myButtons;
+    DigitalInputPin* switch1;
+    DigitalInputPin* switch2;
+    DigitalInputPin* switch3;
 
     float PI = 3.14159265;
     int TOTALCOUNTS = 20;

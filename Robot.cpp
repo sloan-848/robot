@@ -19,7 +19,9 @@ Robot::Robot(){
     leftEncoder = new FEHEncoder(FEHIO::P1_0);
     rightEncoder = new FEHEncoder(FEHIO::P1_1);
 
-    myButtons = new ButtonBoard(FEHIO::Bank3);
+    switch1 = new DigitalInputPin(FEHIO::P2_0);
+    switch2 = new DigitalInputPin(FEHIO::P2_1);
+    switch3 = new DigitalInputPin(FEHIO::P2_2);
 
     //Calibrate servos
     LRservo->SetMin(500);
@@ -48,10 +50,10 @@ void Robot::findAngle(){
         LCD.WriteLine("Press button to select servo: ");
 
         //wait for input
-        while(!myButtons->LeftPressed()&&!myButtons->MiddlePressed()&&!myButtons->RightPressed());
+        while(!switch1->Value()&&!switch2->Value()&&!switch3->Value());
 
         //decision tree
-        if(myButtons->LeftPressed()){
+        if(switch1->Value()){
             LCD.WriteLine("UD servo selected. Please release button.");
             Sleep(1.0);
             bool innerFinish = false;
@@ -61,14 +63,14 @@ void Robot::findAngle(){
                 LCD.WriteLine(UDangle);
                 UDservo->SetDegree(UDangle);
                 //wait for input
-                while(!myButtons->LeftPressed()&&!myButtons->MiddlePressed()&&!myButtons->RightPressed());
-                if(myButtons->LeftPressed()){
+                while(!switch1->Value()&&!switch2->Value()&&!switch3->Value());
+                if(switch1->Value()){
                     UDangle--;
                 }
-                else if(myButtons->MiddlePressed()){
+                else if(switch2->Value()){
                     innerFinish = true;
                 }
-                else if(myButtons->RightPressed()){
+                else if(switch3->Value()){
                     UDangle++;
                 }
                 Sleep(.03);
@@ -76,10 +78,10 @@ void Robot::findAngle(){
             finished = false;
 
         }
-        else if(myButtons->MiddlePressed()){
+        else if(switch2->Value()){
             finished = true;
         }
-        else if(myButtons->RightPressed()){
+        else if(switch3->Value()){
             LCD.WriteLine("LR servo selected. Please release button.");
             Sleep(1.0);
             bool innerFinish = false;
@@ -89,14 +91,14 @@ void Robot::findAngle(){
                 LCD.WriteLine(UDangle);
                 LRservo->SetDegree(UDangle);
                 //wait for input
-                while(!myButtons->LeftPressed()&&!myButtons->MiddlePressed()&&!myButtons->RightPressed());
-                if(myButtons->LeftPressed()){
+                while(!switch1->Value()&&!switch2->Value()&&!switch3->Value());
+                if(switch1->Value()){
                     LRangle--;
                 }
-                else if(myButtons->MiddlePressed()){
+                else if(switch2->Value()){
                     innerFinish = true;
                 }
-                else if(myButtons->RightPressed()){
+                else if(switch3->Value()){
                     LRangle++;
                 }
                 Sleep(.03);
