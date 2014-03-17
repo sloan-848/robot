@@ -319,3 +319,7 @@ void Robot::printStartScreen(){
     LCD.WriteLine("SERVO0 - LR Arm Servo");
     LCD.WriteLine("SERVO1 - UD Arm Servo");
 }
+
+bool Robot::checkRPS(){
+    return true;
+}

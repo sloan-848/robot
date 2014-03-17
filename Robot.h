@@ -26,6 +26,10 @@ public:
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
 
+    //Diagnostic Methods
+    bool checkRPS();
+
+
 
 private:
     //initialize pointers to all objects
