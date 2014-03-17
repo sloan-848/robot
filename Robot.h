@@ -8,20 +8,24 @@
 #include <FEHLCD.h>
 #include <FEHUtility.h>
 #include <FEHWONKA.h>
+#include <string.h>
+#define START 0
+#define SCOOP 1
 
 class Robot{
 public:
     Robot();
 
     void findAngle();
+    bool cdsReady(int op);
     int checkCDS();
     void moveForward(float distance);
     void moveBackward(float distance);
     void turnLeft(int time);
     void turnRight(int degrees);
     void setArmAngle(int LRangle, int UDangle);
+    int getOvenCount();
 
-    int lightValue;
 
 private:
     //initialize pointers to all objects
@@ -45,6 +49,11 @@ private:
     float PI;
     int TOTALCOUNTS;
     float WHEELRADIUS;
+    int ovenCount;
+    int startLightValue;
+    int scoopLightValue;
+
+    void printStartScreen();
 
 };
 #endif // ROBOT_H

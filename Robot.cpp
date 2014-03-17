@@ -1,6 +1,7 @@
 #include "robot.h"
 
 
+
 /*Constructor for Robot Object
  *Initializes values for Robot
  */
@@ -23,7 +24,9 @@ Robot::Robot(){
     switch2 = new DigitalInputPin(FEHIO::P2_1);
     switch3 = new DigitalInputPin(FEHIO::P2_2);
 
-    lightValue = 10;
+    //declare constants
+    startLightValue = 10;
+    scoopLightValue = 20;
     PI = 3.14159265;
     TOTALCOUNTS = 20;
     WHEELRADIUS = 1.35;
@@ -34,12 +37,20 @@ Robot::Robot(){
     UDservo->SetMin(500);
     UDservo->SetMax(2328);
 
-    /*
+
     rps->InitializeMenu();
     rps->Enable();
-    */
 
-    LCD.WriteLine("Initialized robot");
+    ovenCount = rps->Oven();
+
+    LCD.WriteLine("Successfully initialized robot");
+    LCD.Clear(FEHLCD::Black);
+    printStartScreen();
+    while(switch1->Value() && switch2->Value() && switch3->Value());
+}
+
+int Robot::getOvenCount(){
+    return ovenCount;
 }
 
 void Robot::findAngle(){
@@ -57,10 +68,10 @@ void Robot::findAngle(){
         LCD.WriteLine("Press button to select servo: ");
 
         //wait for input
-        while(!switch1->Value()&&!switch2->Value()&&!switch3->Value());
+        while(switch1->Value() && switch2->Value() && switch3->Value());
 
         //decision tree
-        if(switch1->Value()){
+        if(!switch1->Value()){
             LCD.WriteLine("UD servo selected. Please release button.");
             Sleep(1.0);
             bool innerFinish = false;
@@ -70,14 +81,14 @@ void Robot::findAngle(){
                 LCD.WriteLine(UDangle);
                 UDservo->SetDegree(UDangle);
                 //wait for input
-                while(!switch1->Value()&&!switch2->Value()&&!switch3->Value());
-                if(switch1->Value()){
+                while(switch1->Value()&&switch2->Value()&&switch3->Value());
+                if(!switch1->Value()){
                     UDangle--;
                 }
-                else if(switch2->Value()){
+                else if(!switch2->Value()){
                     innerFinish = true;
                 }
-                else if(switch3->Value()){
+                else if(!switch3->Value()){
                     UDangle++;
                 }
                 Sleep(.03);
@@ -85,45 +96,54 @@ void Robot::findAngle(){
             finished = false;
 
         }
-        else if(switch2->Value()){
+        else if(!switch2->Value()){
             finished = true;
         }
-        else if(switch3->Value()){
+        else if(!switch3->Value()){
             LCD.WriteLine("LR servo selected. Please release button.");
             Sleep(1.0);
             bool innerFinish = false;
             while(!innerFinish){
                 LCD.Clear(FEHLCD::Black);
                 LCD.Write("LR servo angle: ");
-                LCD.WriteLine(UDangle);
-                LRservo->SetDegree(UDangle);
+                LCD.WriteLine(LRangle);
+                LRservo->SetDegree(LRangle);
                 //wait for input
-                while(!switch1->Value()&&!switch2->Value()&&!switch3->Value());
-                if(switch1->Value()){
+                while(switch1->Value()&&switch2->Value()&&switch3->Value());
+                if(!switch1->Value()){
                     LRangle--;
                 }
-                else if(switch2->Value()){
+                else if(!switch2->Value()){
                     innerFinish = true;
                 }
-                else if(switch3->Value()){
+                else if(!switch3->Value()){
                     LRangle++;
                 }
                 Sleep(.03);
             }
             finished = false;
         }
+        Sleep(.5);
     }
 }
 
-/* Evaluates the input from the CDS sensor
- *   - Returns value between 0 and 100
- *   - Representative of the percentage of light
- */
-int Robot::checkCDS(){
-    int cdsPercentage = (cdsCell->Value() / 3.3) * 100;
-    return cdsPercentage;
-    Sleep(200);
+
+bool Robot::cdsReady(int op){
+    bool ready = false;
+
+    if(op == START){
+        if(cdsCell->Value() < startLightValue){
+            ready = true;
+        }
+    }
+    else if(op == SCOOP){
+        if(cdsCell->Value() < scoopLightValue){
+            ready = true;
+        }
+    }
+    return ready;
 }
+
 
 /*Move forward a specific distance
  *distance given in INCHES
@@ -286,4 +306,16 @@ void Robot::turnRight(int time){
 void Robot::setArmAngle(int LRangle, int UDangle){
     LRservo->SetDegree(LRangle);
     UDservo->SetDegree(UDangle);
+}
+
+void Robot::printStartScreen(){
+    LCD.WriteLine("Connections: ");
+    LCD.WriteLine("P0_0 - CDS Cell");
+    LCD.WriteLine("P1_0 - Left Wheel Encoder");
+    LCD.WriteLine("P1_1 - Right Wheel Encoder");
+    LCD.WriteLine("P2_0..2 - Switch Board");
+    LCD.WriteLine("MOT0 - Left Wheel Motor");
+    LCD.WriteLine("MOT1 - Right Wheel Motor");
+    LCD.WriteLine("SERVO0 - LR Arm Servo");
+    LCD.WriteLine("SERVO1 - UD Arm Servo");
 }
