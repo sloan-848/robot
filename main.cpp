@@ -5,7 +5,6 @@
 #include <FEHWONKA.h>
 #include <FEHServo.h>*/
 #include "robot.h"
-#include "Function.h"
 
 #define FONTCOLOR FEHLCD::White
 #define CLEARCOLOR FEHLCD::Scarlet
@@ -18,9 +17,15 @@ int main(void)
 
     Robot hal;
 
-    hal.findAngle();
+
     hal.setArmAngle(30,30);
     //hal.findAngle();
+    Sleep(1.0);
+    if(hal.validRPS()){
+        LCD.Clear(FEHLCD::Black);
+        LCD.WriteLine("I guess it works...");
+        Sleep(3.0);
+    }
     LCD.WriteLine("Waiting for light");
     while(!hal.cdsReady(START));
     LCD.WriteLine("Lets do it.");

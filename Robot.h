@@ -27,7 +27,7 @@ public:
     int getOvenCount();
 
     //Diagnostic Methods
-    bool checkRPS();
+    bool validRPS();
 
 
 

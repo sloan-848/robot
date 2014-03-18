@@ -234,7 +234,7 @@ void Robot::moveBackward(float distance){
     rightMotor->SetPercent(0);
 }
 
-/*void Robot::turnLeft(int degrees){
+void Robot::turnLeft(int degrees){
     int motorPercent= 50;
 
     leftEncoder->ResetCounts();
@@ -261,15 +261,16 @@ void Robot::moveBackward(float distance){
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
 
-}*/
+}
+/*Depreciated
 void Robot::turnLeft(int time){
     leftMotor->SetPercent(-50);
     rightMotor->SetPercent(50);
     Sleep(time);
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
-}
-/*
+}*/
+
 void Robot::turnRight(int degrees){
     int motorPercent= 50;
 
@@ -294,18 +295,20 @@ void Robot::turnRight(int degrees){
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
-}*/
+}
+
+/*Depreciated
 void Robot::turnRight(int time){
     leftMotor->SetPercent(50);
     rightMotor->SetPercent(-50);
     Sleep(time);
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
-}
+}*/
 
 void Robot::setArmAngle(int LRangle, int UDangle){
-    LRservo->SetDegree(LRangle);
     UDservo->SetDegree(UDangle);
+    LRservo->SetDegree(LRangle);
 }
 
 void Robot::printStartScreen(){
@@ -320,6 +323,25 @@ void Robot::printStartScreen(){
     LCD.WriteLine("SERVO1 - UD Arm Servo");
 }
 
-bool Robot::checkRPS(){
-    return true;
+bool Robot::validRPS(){
+    bool working = false;
+    rps->Enable();
+    LCD.Clear(FEHLCD::Black);
+    LCD.Write("Please Move RPS Around.");
+    for(int i = 0; i < 100; i++){
+        LCD.WriteLine(rps->Heading());
+        if(rps->Heading() != 0){
+            working = true;
+        }
+        Sleep(.01);
+    }
+    LCD.Write("Waiting for Packet");
+    if(rps->WaitForPacket() != 0){
+        working = true;
+    }
+    else{
+        working = false;
+    }
+
+    return working;
 }
