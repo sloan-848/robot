@@ -18,7 +18,7 @@ Robot::Robot(){
     rps = new FEHWONKA();
 
     leftEncoder = new FEHEncoder(FEHIO::P1_0);
-    rightEncoder = new FEHEncoder(FEHIO::P1_1);
+    rightEncoder = new FEHEncoder(FEHIO::P1_4);
 
     switch1 = new DigitalInputPin(FEHIO::P2_0);
     switch2 = new DigitalInputPin(FEHIO::P2_1);
@@ -262,6 +262,7 @@ void Robot::turnLeft(int degrees){
     rightMotor->SetPercent(0);
 
 }
+
 /*Depreciated
 void Robot::turnLeft(int time){
     leftMotor->SetPercent(-50);
@@ -315,7 +316,7 @@ void Robot::printStartScreen(){
     LCD.WriteLine("Connections: ");
     LCD.WriteLine("P0_0 - CDS Cell");
     LCD.WriteLine("P1_0 - Left Wheel Encoder");
-    LCD.WriteLine("P1_1 - Right Wheel Encoder");
+    LCD.WriteLine("P1_4 - Right Wheel Encoder");
     LCD.WriteLine("P2_0..2 - Switch Board");
     LCD.WriteLine("MOT0 - Left Wheel Motor");
     LCD.WriteLine("MOT1 - Right Wheel Motor");

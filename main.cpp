@@ -19,27 +19,26 @@ int main(void)
 
 
     hal.setArmAngle(30,30);
-    //hal.findAngle();
+
     Sleep(1.0);
-    if(hal.validRPS()){
-        LCD.Clear(FEHLCD::Black);
-        LCD.WriteLine("I guess it works...");
-        Sleep(3.0);
+
+    if(!hal.validRPS()){
+        LCD.WriteLine("RPS FAIL. LOL.");
+        return 0;
     }
     LCD.WriteLine("Waiting for light");
     while(!hal.cdsReady(START));
     LCD.WriteLine("Lets do it.");
-
     Sleep(.5);
-
     LCD.WriteLine("Moving to in-front of skid.");
     hal.moveForward(30);
 
     Sleep(.5);
 
     LCD.WriteLine("Turning Left.");
-    hal.turnLeft(1800);
+    hal.turnLeft(90);
 
+/*
     Sleep(.5);
 
     LCD.WriteLine("Lowering Arm.");
@@ -79,7 +78,7 @@ int main(void)
 
     LCD.WriteLine("Move into chiller");
     hal.moveForward(8);
-
-    return 0;
+*/
+    return 1;
 }
 
