@@ -252,7 +252,7 @@ void Robot::turnLeft(int degrees){
     leftMotor->SetPercent((-1)*motorPercent);
     rightMotor->SetPercent(motorPercent);
 
-    while(rps->Heading() != finalDeg){
+    while((rps->Heading()-1 != finalDeg)||(rps->Heading() != finalDeg)||(rps->Heading()+1 != finalDeg)){
         LCD.Write("Current: ");
         LCD.Write(rps->Heading());
     }
@@ -263,14 +263,8 @@ void Robot::turnLeft(int degrees){
 
 }
 
-/*Depreciated
-void Robot::turnLeft(int time){
-    leftMotor->SetPercent(-50);
-    rightMotor->SetPercent(50);
-    Sleep(time);
-    leftMotor->SetPercent(0);
-    rightMotor->SetPercent(0);
-}*/
+
+
 
 void Robot::turnRight(int degrees){
     int motorPercent= 50;
@@ -297,15 +291,6 @@ void Robot::turnRight(int degrees){
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
 }
-
-/*Depreciated
-void Robot::turnRight(int time){
-    leftMotor->SetPercent(50);
-    rightMotor->SetPercent(-50);
-    Sleep(time);
-    leftMotor->SetPercent(0);
-    rightMotor->SetPercent(0);
-}*/
 
 void Robot::setArmAngle(int LRangle, int UDangle){
     UDservo->SetDegree(UDangle);

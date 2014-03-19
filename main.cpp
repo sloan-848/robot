@@ -23,13 +23,21 @@ int main(void)
     Sleep(1.0);
 
     if(!hal.validRPS()){
+        LCD.Clear(CLEARCOLOR);
         LCD.WriteLine("RPS FAIL. LOL.");
         return 0;
     }
+    else{
+        LCD.Clear(CLEARCOLOR);
+        LCD.WriteLine("RPS Good.");
+        Sleep(2.0);
+    }
+
     LCD.WriteLine("Waiting for light");
     while(!hal.cdsReady(START));
     LCD.WriteLine("Lets do it.");
-    Sleep(.5);
+    Sleep(1.0);
+    LCD.Clear(CLEARCOLOR);
     LCD.WriteLine("Moving to in-front of skid.");
     hal.moveForward(30);
 
