@@ -17,14 +17,18 @@ public:
     Robot();
 
     void findAngle();
-    bool cdsReady(int op);
-    int checkCDS();
+    bool cdsStart();
+    int cdsColor();
     void moveForward(float distance);
     void moveBackward(float distance);
     void turnLeft(int time);
     void turnRight(int degrees);
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
+
+    //Constants
+    int const static BLUELIGHT = 1;
+    int const static REDLIGHT = 2;
 
     //Diagnostic Methods
     bool validRPS();
@@ -57,6 +61,7 @@ private:
     int startLightValue;
     int scoopLightValue;
 
+    int checkCDS();
     void printStartScreen();
 
 };

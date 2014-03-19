@@ -17,7 +17,6 @@ int main(void)
 
     Robot hal;
 
-
     hal.setArmAngle(30,30);
 
     Sleep(1.0);
@@ -33,18 +32,38 @@ int main(void)
         Sleep(2.0);
     }
 
-    LCD.WriteLine("Waiting for light");
+  /*LCD.WriteLine("Waiting for light");
     while(!hal.cdsReady(START));
     LCD.WriteLine("Lets do it.");
     Sleep(1.0);
+    */
+
     LCD.Clear(CLEARCOLOR);
-    LCD.WriteLine("Moving to in-front of skid.");
-    hal.moveForward(30);
+    LCD.WriteLine("Moving down the ramp.");
+    hal.moveBackward(24);
 
     Sleep(.5);
 
-    LCD.WriteLine("Turning Left.");
-    hal.turnLeft(90);
+    LCD.WriteLine("Reading Light");
+    while(hal.cdsColor() == 0);
+    LCD.Write("COLOR: ");
+    Sleep(1.5);
+    if(hal.cdsColor() == hal.REDLIGHT){
+        LCD.WriteLine("Red");
+        hal.turnLeft(30);
+    }
+    else if(hal.cdsColor() == hal.BLUELIGHT){
+        LCD.WriteLine("Blue");
+        hal.turnRight(30);
+    }
+    else{
+        LCD.WriteLine("I Lost The Light!");
+        return 0;
+    }
+    LCD.WriteLine("Backing up to drop");
+    hal.moveBackward(13);
+
+    Sleep(3.0);
 
 /*
     Sleep(.5);
