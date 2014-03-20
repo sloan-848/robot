@@ -19,8 +19,9 @@ public:
     void findAngle();
     bool cdsStart();
     int cdsColor();
-    void moveForward(float distance);
-    void moveBackward(float distance);
+    void moveForward(float distance, int power);
+    void moveBackward(float distance, int power);
+    void timeBack(int time, int power);
     void turnLeft(int time);
     void turnRight(int degrees);
     void setArmAngle(int LRangle, int UDangle);

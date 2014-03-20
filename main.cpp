@@ -17,9 +17,6 @@ int main(void)
 
     Robot hal;
 
-    hal.setArmAngle(30,30);
-
-    Sleep(1.0);
 
     if(!hal.validRPS()){
         LCD.Clear(CLEARCOLOR);
@@ -39,31 +36,86 @@ int main(void)
     */
 
     LCD.Clear(CLEARCOLOR);
+
+    LCD.WriteLine("Flipping Switch");
+    hal.setArmAngle(116,122);
+    Sleep(.6);
+
+    hal.setArmAngle(116,95);
+
     LCD.WriteLine("Moving down the ramp.");
-    hal.moveBackward(24);
+    hal.moveBackward(35,55);
 
     Sleep(.5);
 
     LCD.WriteLine("Reading Light");
     while(hal.cdsColor() == 0);
     LCD.Write("COLOR: ");
-    Sleep(1.5);
     if(hal.cdsColor() == hal.REDLIGHT){
         LCD.WriteLine("Red");
+        Sleep(1.0);
+        hal.turnLeft(40);
+        Sleep(1.0);
+
+        LCD.WriteLine("Backing up to drop");
+        hal.moveBackward(5,55);
+
+        Sleep(2.0);
+
+        LCD.WriteLine("Moving Forward");
+        hal.moveForward(5,45);
+
+        LCD.WriteLine("Turning Left");
         hal.turnLeft(30);
+
+        LCD.WriteLine("Going Forward");
+        hal.moveForward(5,45);
+
+        LCD.WriteLine("Turn to go forward up ramp.");
+        hal.turnRight(30);
     }
     else if(hal.cdsColor() == hal.BLUELIGHT){
         LCD.WriteLine("Blue");
-        hal.turnRight(30);
+        Sleep(1.0);
+        hal.turnRight(35);
+        Sleep(1.0);
+
+        LCD.WriteLine("Backing up to drop");
+        hal.moveBackward(8,50);
+
+        LCD.WriteLine("Turning to match up with drop point");
+        hal.turnLeft(35);
+
+        LCD.WriteLine("Back up for drop.");
+        hal.timeBack(5,50);
+
+        Sleep(2.0);
+
+        LCD.WriteLine("Move Forward");
+        hal.moveForward(4,50);
+
+        LCD.WriteLine("Turning Right");
+        hal.turnRight(15);
+
+        LCD.WriteLine("Going Forward");
+        hal.moveForward(12,50);
+
+        LCD.WriteLine("Turn to go forward up ramp.");
+        hal.turnLeft(15);
     }
     else{
         LCD.WriteLine("I Lost The Light!");
         return 0;
     }
-    LCD.WriteLine("Backing up to drop");
-    hal.moveBackward(13);
 
-    Sleep(3.0);
+    LCD.WriteLine("Go forward up ramp.");
+    hal.moveForward(28,70);
+
+    LCD.WriteLine("Turning Left");
+    hal.turnLeft(90);
+
+    LCD.WriteLine("To the charger!");
+    hal.moveForward(40,55);
 
 /*
     Sleep(.5);

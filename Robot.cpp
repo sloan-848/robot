@@ -149,7 +149,7 @@ int Robot::cdsColor(){
     if(checkCDS() < 12){
         return REDLIGHT;
     }
-    else if((checkCDS() > 19)&&(checkCDS() < 40)){
+    else if((checkCDS() > 15)&&(checkCDS() < 40)){
         return BLUELIGHT;
     }
     else if(checkCDS() >= 40){
@@ -165,8 +165,8 @@ int Robot::cdsColor(){
  *because we're in AMERICA
  *Land of the Free. Home of the Brave.*/
 
-void Robot::moveForward(float distance){
-    int motorPercent= 50;
+void Robot::moveForward(float distance, int power){
+    int motorPercent = power;
 
     leftEncoder->ResetCounts();
     rightEncoder->ResetCounts();
@@ -175,14 +175,15 @@ void Robot::moveForward(float distance){
     int estCounts = (TOTALCOUNTS*distance)/(2*PI*WHEELRADIUS);
 
     leftMotor->SetPercent(motorPercent);
-    rightMotor->SetPercent(motorPercent-5);
+    rightMotor->SetPercent(motorPercent-(power/15.0));
 
     int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+
     //while the average counts between the wheels are less than the final desired count
     while(avgCounts < estCounts){
         //normal run
-        if(avgCounts > 5){
-            rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()-1) - rightEncoder->Counts()));
+        if(avgCounts > 4){
+            rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()) - rightEncoder->Counts()));
         }
         avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     }
@@ -191,8 +192,8 @@ void Robot::moveForward(float distance){
     rightMotor->SetPercent(0);
 }
 
-void Robot::moveBackward(float distance){
-    int motorPercent= -50;
+void Robot::moveBackward(float distance, int power){
+    int motorPercent= power*(-1);
 
     leftEncoder->ResetCounts();
     rightEncoder->ResetCounts();
@@ -201,24 +202,38 @@ void Robot::moveBackward(float distance){
     int estCounts = (TOTALCOUNTS*distance)/(2*PI*WHEELRADIUS);
 
     leftMotor->SetPercent(motorPercent);
-    rightMotor->SetPercent(motorPercent+5);
+    rightMotor->SetPercent(motorPercent);
 
     int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     //while the average counts between the wheels are less than the final desired count
     while(avgCounts < estCounts){
         //normal run
-        if(avgCounts > 5){
+        LCD.Write("Left: ");
+        LCD.Write(leftEncoder->Counts());
+        LCD.Write("  Right: ");
+        LCD.WriteLine(rightEncoder->Counts());
+        if(avgCounts > 4){
             rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
+            LCD.Write("Correction: ");
+            LCD.WriteLine(rightEncoder->Counts() - leftEncoder->Counts());
         }
         avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     }
     //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+}
+
+void Robot::timeBack(int time, int power){
+    leftMotor->SetPercent(power*(-1));
+    rightMotor->SetPercent(power*(-1));
+    Sleep(time*1.0);
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
 }
 
 void Robot::turnLeft(int degrees){
-    int motorPercent= 30;
+    int motorPercent= 40;
     int tolerance = 3;
 
     rps->Enable();
@@ -227,10 +242,11 @@ void Robot::turnLeft(int degrees){
 
     int startDeg = rps->Heading();
 
-    int finalDeg = startDeg-degrees;
-    if(finalDeg < 0){
-        finalDeg += 180;
+    int finalDeg = startDeg + degrees;
+    if(finalDeg >= 180){
+        finalDeg -= 180;
     }
+
     LCD.Write("Final: ");
     LCD.WriteLine(finalDeg);
     Sleep(.5);
@@ -249,7 +265,7 @@ void Robot::turnLeft(int degrees){
 }
 
 void Robot::turnRight(int degrees){
-    int motorPercent= 30;
+    int motorPercent= 40;
     int tolerance = 3;
 
     rps->Enable();
@@ -258,13 +274,16 @@ void Robot::turnRight(int degrees){
 
     int startDeg = rps->Heading();
 
-    int finalDeg = startDeg + degrees;
-    if(finalDeg >= 180){
-        finalDeg -= 180;
+    int finalDeg = startDeg-degrees;
+    if(finalDeg < 0){
+        finalDeg += 180;
     }
 
+    LCD.Write("Final: ");
+    LCD.WriteLine(finalDeg);
+    Sleep(.5);
     leftMotor->SetPercent(motorPercent);
-    rightMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent((-1)*motorPercent);
 
     while(!((rps->Heading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= rps->Heading()))){
         LCD.Write("Current: ");
