@@ -253,10 +253,7 @@ void Robot::turnLeft(int degrees){
     leftMotor->SetPercent((-1)*motorPercent);
     rightMotor->SetPercent(motorPercent);
 
-    while(!((rps->Heading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= rps->Heading()))){
-        LCD.Write("Current: ");
-        LCD.WriteLine(rps->Heading());
-    }
+    while(!((rps->Heading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= rps->Heading())));
 
     //stop wheel movement
     leftMotor->SetPercent(0);
@@ -285,10 +282,7 @@ void Robot::turnRight(int degrees){
     leftMotor->SetPercent(motorPercent);
     rightMotor->SetPercent((-1)*motorPercent);
 
-    while(!((rps->Heading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= rps->Heading()))){
-        LCD.Write("Current: ");
-        LCD.WriteLine(rps->Heading());
-    }
+    while(!((rps->Heading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= rps->Heading())));
 
     //stop wheel movement
     leftMotor->SetPercent(0);

@@ -52,7 +52,7 @@ int main(void)
         Sleep(1.0);
 
         LCD.WriteLine("Backing up to drop");
-        hal.moveBackward(10,50);
+        hal.moveBackward(11,50);
 
         LCD.WriteLine("Turning to match up with drop point");
         hal.turnRight(35);
@@ -81,7 +81,7 @@ int main(void)
         Sleep(1.0);
 
         LCD.WriteLine("Backing up to drop");
-        hal.moveBackward(10,50);
+        hal.moveBackward(11,50);
 
         LCD.WriteLine("Turning to match up with drop point");
         hal.turnLeft(35);
@@ -95,13 +95,13 @@ int main(void)
         hal.moveForward(4,50);
 
         LCD.WriteLine("Turning Right");
-        hal.turnRight(20);
+        hal.turnRight(25);
 
         LCD.WriteLine("Going Forward");
         hal.moveForward(12,50);
 
         LCD.WriteLine("Turn to go forward up ramp.");
-        hal.turnLeft(15);
+        hal.turnLeft(20);
     }
     else{
         LCD.WriteLine("I Lost The Light!");
