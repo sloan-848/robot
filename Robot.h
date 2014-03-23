@@ -24,15 +24,23 @@ public:
     int cdsColor();
     void moveForward(float distance, int power);
     void moveBackward(float distance, int power);
+    void timeForward(int time, int power);
     void timeBack(int time, int power);
     void turnLeft(int time);
     void turnRight(int degrees);
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
 
+
     //Constants
     int const static BLUELIGHT = 1;
     int const static REDLIGHT = 2;
+
+    int const static SLOW = 40;
+    int const static MEDIUM = 55;
+    int const static FAST = 65;
+    int const static SUPERFAST = 80;
+    int const static MAX = 95;
 
     //Diagnostic Methods
     bool validRPS();

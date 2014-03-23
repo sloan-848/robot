@@ -151,6 +151,7 @@ int Robot::checkCDS(){
 /*
  *Checks if the starting light is on.
  *Used at beginning of run.
+ *Returns true if the light is on.
  */
 bool Robot::cdsStart(){
     bool ready = false;
@@ -253,7 +254,19 @@ void Robot::moveBackward(float distance, int power){
 }
 
 /*
- *Move the motors in a reversed direction for a specified amount of time.
+ *Move the motors forward for a specified amount of time.
+ */
+void Robot::timeForward(int time, int power){
+    leftMotor->SetPercent(power);
+    rightMotor->SetPercent(power);
+    Sleep(time*1.0);
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+}
+
+
+/*
+ *Move the motors backward for a specified amount of time.
  */
 void Robot::timeBack(int time, int power){
     leftMotor->SetPercent(power*(-1));
@@ -269,7 +282,7 @@ void Robot::timeBack(int time, int power){
  */
 void Robot::turnLeft(int degrees){
     int motorPercent= 40;
-    int tolerance = 3;
+    int tolerance = 1;
 
     rps->Enable();
     leftEncoder->ResetCounts();
@@ -302,7 +315,7 @@ void Robot::turnLeft(int degrees){
  */
 void Robot::turnRight(int degrees){
     int motorPercent= 40;
-    int tolerance = 3;
+    int tolerance = 1;
 
     rps->Enable();
     leftEncoder->ResetCounts();
