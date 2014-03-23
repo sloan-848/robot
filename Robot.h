@@ -1,7 +1,6 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 #include <math.h>
-//#include <FEHIO.h>
 #include <FEHIO.h>
 #include <FEHServo.h>
 #include <FEHMotor.h>
@@ -12,10 +11,14 @@
 #define START 0
 #define SCOOP 1
 
+/*
+ *Class for the robot. Includes sensor and motor pointers and methods to control the robot.
+ */
 class Robot{
 public:
     Robot();
 
+    //public methods for control and input
     void findAngle();
     bool cdsStart();
     int cdsColor();
@@ -55,6 +58,7 @@ private:
     DigitalInputPin* switch2;
     DigitalInputPin* switch3;
 
+    //initialize constants and private values
     float PI;
     int TOTALCOUNTS;
     float WHEELRADIUS;
@@ -62,6 +66,7 @@ private:
     int startLightValue;
     int scoopLightValue;
 
+    //Private methods; used internally
     int checkCDS();
     void printStartScreen();
 

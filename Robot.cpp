@@ -1,8 +1,11 @@
 #include "robot.h"
 
 
-/*Constructor for Robot Object
- *Initializes values for Robot
+/*
+ *Constructor for Robot Class
+ *Initializes sensor and motor values for Robot.
+ *Enables RPS and initializes menu.
+ *Displays start screen listing connections.
  */
 Robot::Robot(){
     //Set values to pointers
@@ -51,10 +54,17 @@ Robot::Robot(){
     while(switch1->Value() && switch2->Value() && switch3->Value());
 }
 
+/*
+ *Returns the oven value returned by the RPS
+ */
 int Robot::getOvenCount(){
     return ovenCount;
 }
 
+/*
+ *Subroutine that allows the user to use switchboard
+ *to move arm servos to a specific position.
+ */
 void Robot::findAngle(){
     bool finished = false;
     int LRangle = 90;
@@ -129,11 +139,19 @@ void Robot::findAngle(){
     }
 }
 
+/*
+ *Returns the value of the CDS cell as an integer value
+ *between 0 and 100.
+ */
 int Robot::checkCDS(){
     int cdsPercentage = (cdsCell->Value() / 3.3) * 100;
     return cdsPercentage;
 }
 
+/*
+ *Checks if the starting light is on.
+ *Used at beginning of run.
+ */
 bool Robot::cdsStart(){
     bool ready = false;
     if(cdsCell->Value() < startLightValue){
@@ -142,6 +160,10 @@ bool Robot::cdsStart(){
     return ready;
 }
 
+/*
+ *Returns the color of the light under the CDS cell.
+ *Used in shop.
+ */
 int Robot::cdsColor(){
     float redVal = 5;
     float blueVal = 22;
@@ -160,11 +182,13 @@ int Robot::cdsColor(){
     }
 }
 
-/*Move forward a specific distance
+/*
+ *Move forward a specific distance
  *distance given in INCHES
  *because we're in AMERICA
- *Land of the Free. Home of the Brave.*/
-
+ *Land of the Free. Home of the Brave.
+ *Also, requires the power percentage that the motors will use.
+ */
 void Robot::moveForward(float distance, int power){
     int motorPercent = power;
 
@@ -192,6 +216,10 @@ void Robot::moveForward(float distance, int power){
     rightMotor->SetPercent(0);
 }
 
+/*
+ *Move forward a specific distance given in INCHES
+ *Also, requires the power percentage that the motors will use.
+ */
 void Robot::moveBackward(float distance, int power){
     int motorPercent= power*(-1);
 
@@ -224,6 +252,9 @@ void Robot::moveBackward(float distance, int power){
     rightMotor->SetPercent(0);
 }
 
+/*
+ *Move the motors in a reversed direction for a specified amount of time.
+ */
 void Robot::timeBack(int time, int power){
     leftMotor->SetPercent(power*(-1));
     rightMotor->SetPercent(power*(-1));
@@ -232,6 +263,10 @@ void Robot::timeBack(int time, int power){
     rightMotor->SetPercent(0);
 }
 
+/*
+ *Turns the robot left for a certain number of degrees.
+ *Uses RPS headings.
+ */
 void Robot::turnLeft(int degrees){
     int motorPercent= 40;
     int tolerance = 3;
@@ -261,6 +296,10 @@ void Robot::turnLeft(int degrees){
 
 }
 
+/*
+ *Turns the robot right for a certain number of degrees.
+ *Uses RPS headings.
+ */
 void Robot::turnRight(int degrees){
     int motorPercent= 40;
     int tolerance = 3;
@@ -289,11 +328,18 @@ void Robot::turnRight(int degrees){
     rightMotor->SetPercent(0);
 }
 
+/*
+ *Sets the arm's servo motors to specified values. UD first, then LR.
+ */
 void Robot::setArmAngle(int LRangle, int UDangle){
     UDservo->SetDegree(UDangle);
     LRservo->SetDegree(LRangle);
 }
 
+/*
+ *Print a splash screen displaying the robot's connections to the LCD.
+ *Used in initialization of robot class.
+ */
 void Robot::printStartScreen(){
     LCD.WriteLine("Connections: ");
     LCD.WriteLine("P0_0 - CDS Cell");
@@ -306,6 +352,9 @@ void Robot::printStartScreen(){
     LCD.WriteLine("SERVO1 - UD Arm Servo");
 }
 
+/*
+ *Check if the RPS is functioning properly.
+ */
 bool Robot::validRPS(){
     bool working = false;
     rps->Enable();

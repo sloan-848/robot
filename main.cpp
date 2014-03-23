@@ -17,10 +17,11 @@ int main(void)
 
     Robot hal;
 
-
+    //check for valid RPS. Necessary for turning.
     if(!hal.validRPS()){
         LCD.Clear(CLEARCOLOR);
         LCD.WriteLine("RPS FAIL. LOL.");
+        //TODO: Run alternative time-based turning program.
         return 0;
     }
     else{
@@ -31,17 +32,19 @@ int main(void)
 
     LCD.Clear(CLEARCOLOR);
 
+    //Flip switch - PT 3/21
     LCD.WriteLine("Flipping Switch");
     hal.setArmAngle(116,122);
     Sleep(.6);
-
     hal.setArmAngle(116,95);
 
+    //Move down ramp - PT 3/21
     LCD.WriteLine("Moving down the ramp.");
     hal.moveBackward(35,55);
 
     Sleep(.5);
 
+    //Check CDS color - PT 3/21
     LCD.WriteLine("Reading Light");
     while(hal.cdsColor() == 0);
     LCD.Write("COLOR: ");
@@ -108,6 +111,8 @@ int main(void)
         return 0;
     }
 
+    //Move back up ramp - PT 3/21
+    //Necessary minimum motor power to move up ramp
     LCD.WriteLine("Go forward up ramp.");
     hal.moveForward(25,70);
 
