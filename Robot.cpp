@@ -345,8 +345,8 @@ void Robot::turnRight(int degrees){
  *Sets the arm's servo motors to specified values. UD first, then LR.
  */
 void Robot::setArmAngle(int LRangle, int UDangle){
-    UDservo->SetDegree(UDangle);
     LRservo->SetDegree(LRangle);
+    UDservo->SetDegree(UDangle);
 }
 
 /*
