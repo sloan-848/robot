@@ -99,7 +99,7 @@ int main(void)
 
     //Move down ramp - PT 3/21
     LCD.WriteLine("Moving down the ramp.");
-    hal.moveBackward(35,55);
+    hal.moveBackward(35,hal.MEDIUM);
 
 
     //Check CDS color - PT 3/21
@@ -114,6 +114,7 @@ int main(void)
         hal.moveBackward(11,hal.SLOW);
         hal.turnRight(35);
         hal.timeBack(3,hal.SLOW);
+
 
         //Drop Scoop
 
@@ -134,6 +135,7 @@ int main(void)
         hal.moveBackward(11,hal.SLOW);
         hal.turnLeft(35);
         hal.timeBack(3,hal.SLOW);
+
 
         //Drop Scoop
 
@@ -156,6 +158,7 @@ int main(void)
     hal.moveBackward(3.0, hal.MEDIUM);
     hal.turnRight(90);
     hal.moveForward(00, hal.MEDIUM);  //Distance to even with ramp
+    hal.turnLeft(90);
 
 
     //Move up ramp and into ChargeZone
