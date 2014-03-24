@@ -30,17 +30,25 @@ public:
     void turnRight(int degrees);
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
+    void wait(float time);
+
+    int checkCDS();
 
 
-    //Constants
+    //Light Constants
     int const static BLUELIGHT = 1;
     int const static REDLIGHT = 2;
 
+    //Speed Constants
     int const static SLOW = 40;
     int const static MEDIUM = 55;
     int const static FAST = 65;
     int const static SUPERFAST = 80;
     int const static MAX = 95;
+
+    //Time Constants
+    float const static SHORT = .5;
+    float const static LONG = 2.0;
 
     //Diagnostic Methods
     bool validRPS();
@@ -75,7 +83,7 @@ private:
     int scoopLightValue;
 
     //Private methods; used internally
-    int checkCDS();
+
     void printStartScreen();
 
 };

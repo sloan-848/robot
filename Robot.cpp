@@ -27,7 +27,7 @@ Robot::Robot(){
     switch3 = new DigitalInputPin(FEHIO::P2_2);
 
     //declare constants
-    startLightValue = 10;
+    startLightValue = 12;
     scoopLightValue = 20;
     PI = 3.14159265;
     TOTALCOUNTS = 20;
@@ -42,6 +42,7 @@ Robot::Robot(){
 
     rps->InitializeMenu();
     LCD.WriteLine("Sucessfully Initialized RPS");
+
     rps->Enable();
     LCD.WriteLine("Sucessfully Enabled RPS");
 
@@ -59,6 +60,13 @@ Robot::Robot(){
  */
 int Robot::getOvenCount(){
     return ovenCount;
+}
+
+/*
+ *Sleeps a specific amount of time
+ */
+void Robot::wait(float time){
+    Sleep(time);
 }
 
 /*
@@ -155,7 +163,7 @@ int Robot::checkCDS(){
  */
 bool Robot::cdsStart(){
     bool ready = false;
-    if(cdsCell->Value() < startLightValue){
+    if(checkCDS() < startLightValue){
         ready = true;
     }
     return ready;
@@ -215,6 +223,7 @@ void Robot::moveForward(float distance, int power){
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+    wait(SHORT);
 }
 
 /*
@@ -251,6 +260,7 @@ void Robot::moveBackward(float distance, int power){
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+    wait(SHORT);
 }
 
 /*
@@ -262,6 +272,7 @@ void Robot::timeForward(int time, int power){
     Sleep(time*1.0);
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+    wait(SHORT);
 }
 
 
@@ -274,6 +285,7 @@ void Robot::timeBack(int time, int power){
     Sleep(time*1.0);
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+    wait(SHORT);
 }
 
 /*
@@ -282,7 +294,7 @@ void Robot::timeBack(int time, int power){
  */
 void Robot::turnLeft(int degrees){
     int motorPercent= 40;
-    int tolerance = 1;
+    int tolerance = 2;
 
     rps->Enable();
     leftEncoder->ResetCounts();
@@ -306,7 +318,7 @@ void Robot::turnLeft(int degrees){
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
-
+    wait(SHORT);
 }
 
 /*
@@ -315,7 +327,7 @@ void Robot::turnLeft(int degrees){
  */
 void Robot::turnRight(int degrees){
     int motorPercent= 40;
-    int tolerance = 1;
+    int tolerance = 2;
 
     rps->Enable();
     leftEncoder->ResetCounts();
@@ -339,6 +351,7 @@ void Robot::turnRight(int degrees){
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+    wait(SHORT);
 }
 
 /*
@@ -346,7 +359,9 @@ void Robot::turnRight(int degrees){
  */
 void Robot::setArmAngle(int LRangle, int UDangle){
     LRservo->SetDegree(LRangle);
+    wait(SHORT);
     UDservo->SetDegree(UDangle);
+    wait(SHORT);
 }
 
 /*
