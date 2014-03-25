@@ -20,14 +20,14 @@ Robot::Robot(){
     rps = new FEHWONKA();
 
     leftEncoder = new FEHEncoder(FEHIO::P1_0);
-    rightEncoder = new FEHEncoder(FEHIO::P1_4);
+    rightEncoder = new FEHEncoder(FEHIO::P1_7);
 
     switch1 = new DigitalInputPin(FEHIO::P2_0);
     switch2 = new DigitalInputPin(FEHIO::P2_1);
     switch3 = new DigitalInputPin(FEHIO::P2_2);
 
     //declare constants
-    startLightValue = 12;
+    startLightValue = 18;
     scoopLightValue = 20;
     PI = 3.14159265;
     TOTALCOUNTS = 20;
@@ -192,6 +192,20 @@ int Robot::cdsColor(){
 }
 
 /*
+ *Returns X value of robot using RPS.
+ */
+float Robot::getX(){
+    return rps->X();
+}
+
+/*
+ *Returns Y value of robot using RPS.
+ */
+float Robot::getY(){
+    return rps->Y();
+}
+
+/*
  *Move forward a specific distance
  *distance given in INCHES
  *because we're in AMERICA
@@ -213,7 +227,9 @@ void Robot::moveForward(float distance, int power){
     int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
 
     //while the average counts between the wheels are less than the final desired count
+    int i = 0;
     while(avgCounts < estCounts){
+        i++;
         //normal run
         if(avgCounts > 4){
             rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()) - rightEncoder->Counts()));
@@ -223,17 +239,21 @@ void Robot::moveForward(float distance, int power){
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+    LCD.WriteLine(i);
     wait(SHORT);
 }
 
 /*
- *Move forward to a specific coordinate. One parameter must be zero.
+ *Move forward a specific coordinate distance. One parameter must be zero.
  */
-void Robot::moveToForward(int finalX, int finalY, int power){
+void Robot::moveForward(float distX, float distY, int power){
 	int motorPercent = power;
 	int tolerance = 2;
 	
-	RPS->Enable();
+    rps->Enable();
+
+    int initX = rps->X();
+    int initY = rps->Y();
 
     leftEncoder->ResetCounts();
     rightEncoder->ResetCounts();
@@ -244,9 +264,9 @@ void Robot::moveToForward(int finalX, int finalY, int power){
     int avgCounts = 0;
 	
     //split for navigation  
-	if(finalX == 0){
+    if(distX == 0){
 		//move until get to y coordinate
-		while(!((RPS->y() <= finalY+2)&&(RPS->y() >= finalY-2)){
+        while(!((abs(rps->Y()-initY) <= distY+tolerance)&&(abs(rps->Y()-initY) >= distY-tolerance))){
 			//normal run
 			if(avgCounts > 4){
 				rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()) - rightEncoder->Counts()));
@@ -254,9 +274,9 @@ void Robot::moveToForward(int finalX, int finalY, int power){
 			avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
 		}  
 	}
-	else if(finalY == 0){
+    else if(distY == 0){
 		//move until get to y coordinate
-		while(!((RPS->x() <= finalX+2)&&(RPS->x() >= finalX-2)){
+        while(!((abs(rps->X() - initX) <= distX+tolerance)&&(abs(rps->X()-initX) >= distX-tolerance))){
 			//normal run
 			if(avgCounts > 4){
 				rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()) - rightEncoder->Counts()));
@@ -272,7 +292,7 @@ void Robot::moveToForward(int finalX, int finalY, int power){
     rightMotor->SetPercent(0);
 	wait(SHORT);
 }	
-	
+
 /*
  *Move forward a specific distance given in INCHES
  *Also, requires the power percentage that the motors will use.
@@ -307,11 +327,14 @@ void Robot::moveBackward(float distance, int power){
 /*
  *Move forward to a specific coordinate. One parameter must be zero.
  */
-void Robot::moveToBackward(int finalX, int finalY, int power){
+void Robot::moveBackward(float finalX, float finalY, int power){
 	int motorPercent = power*(-1);
 	int tolerance = 2;
 	
-	RPS->Enable();
+    int initX = rps->X();
+    int initY = rps->Y();
+
+    rps->Enable();
 
     leftEncoder->ResetCounts();
     rightEncoder->ResetCounts();
@@ -324,7 +347,7 @@ void Robot::moveToBackward(int finalX, int finalY, int power){
     //split for navigation  
 	if(finalX == 0){
 		//move until get to y coordinate
-		while(!((RPS->y() <= finalY+tolerance)&&(RPS->y() >= finalY-tolerance)){
+        while(!((abs(rps->Y()-initY) <= finalY+tolerance)&&(abs(rps->Y()-initY) >= finalY-tolerance))){
 			if(avgCounts > 4){
 				rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
 			}
@@ -333,7 +356,7 @@ void Robot::moveToBackward(int finalX, int finalY, int power){
 	}
 	else if(finalY == 0){
 		//move until get to y coordinate
-		while(!((RPS->x() <= finalX+tolerance)&&(RPS->x() >= finalX-tolerance)){
+        while(!((abs(rps->X()-initX) <= finalX+tolerance)&&(abs(rps->X()-initX) >= finalX-tolerance))){
 			if(avgCounts > 4){
 				rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
 			}
@@ -347,13 +370,15 @@ void Robot::moveToBackward(int finalX, int finalY, int power){
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
 	wait(SHORT);
-}	
+}
+
+
 /*
  *Move the motors forward for a specified amount of time.
  */
 void Robot::timeForward(int time, int power){
     leftMotor->SetPercent(power);
-    rightMotor->SetPercent(power);
+    rightMotor->SetPercent(power-(power/15.0));
     Sleep(time*1.0);
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
@@ -457,7 +482,7 @@ void Robot::printStartScreen(){
     LCD.WriteLine("Connections: ");
     LCD.WriteLine("P0_0 - CDS Cell");
     LCD.WriteLine("P1_0 - Left Wheel Encoder");
-    LCD.WriteLine("P1_4 - Right Wheel Encoder");
+    LCD.WriteLine("P1_7 - Right Wheel Encoder");
     LCD.WriteLine("P2_0..2 - Switch Board");
     LCD.WriteLine("MOT0 - Left Wheel Motor");
     LCD.WriteLine("MOT1 - Right Wheel Motor");

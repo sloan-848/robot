@@ -1,6 +1,7 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 #include <math.h>
+//#include <FEHIO.h>
 #include <FEHIO.h>
 #include <FEHServo.h>
 #include <FEHMotor.h>
@@ -23,9 +24,9 @@ public:
     bool cdsStart();
     int cdsColor();
     void moveForward(float distance, int power);
-	void moveToForward(int finalX, int finalY, int power);
+    void moveForward(float distX, float distY, int power);
     void moveBackward(float distance, int power);
-	void moveToBackward(int finalX, int finalY, int power);
+    void moveBackward(float distX, float distY, int power);
     void timeForward(int time, int power);
     void timeBack(int time, int power);
     void turnLeft(int time);
@@ -33,6 +34,9 @@ public:
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
     void wait(float time);
+
+    float getX();
+    float getY();
 
     int checkCDS();
 

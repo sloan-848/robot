@@ -20,7 +20,8 @@ int main(void)
 
 
     //Set initial arm value
-    hal.setArmAngle(70,160);  //EO - 3/23
+    hal.setArmAngle(165,170);
+
 
 /*RPS check doesn't work
     //check for valid RPS. Necessary for turning.
@@ -45,12 +46,17 @@ int main(void)
     while(!hal.cdsStart());
     LCD.WriteLine("Lets do it!");
 
+    hal.timeForward(2.0,hal.SLOW);
 
     //press button the required number of times
     for(int i = 0; i < hal.getOvenCount(); i++){
-        hal.setArmAngle(0,67);  //EO - 3/23
-        hal.setArmAngle(35,67);  //EO - 3/23
+        hal.setArmAngle(165,170);
+        hal.setArmAngle(180,170);
     }
+    hal.setArmAngle(165,170);
+
+    hal.timeBack(1,hal.SLOW);
+
     hal.setArmAngle(0,121);  //EO - 3/23
 
 
@@ -59,23 +65,31 @@ int main(void)
 
 
     //move forward to next task
-    hal.moveForward(25,hal.MEDIUM);  //EO - 3/23
+    //hal.moveForward(25,hal.MEDIUM);  //EO - 3/23
+    hal.moveForward(29,0,hal.MEDIUM);
 
     //Get into position to flip switch - also squares up
     hal.turnLeft(90);
-    hal.setArmAngle(116,132);
-    hal.timeForward(5,hal.SLOW);
+    hal.setArmAngle(116,135);
+    hal.timeForward(2,hal.SUPERFAST);
 
 
     //Flip switch - PT 3/21
-    hal.setArmAngle(116,95);
+    hal.setArmAngle(116,85);
 
 
     //Get in position to pull pin
-    hal.moveBackward(8, hal.MEDIUM);  //EO - 3/23
+    //hal.moveBackward(8, hal.MEDIUM);  //EO - 3/23
+    hal.moveBackward(0,6,hal.MEDIUM);
     hal.turnRight(90);
     hal.setArmAngle(178,165);  //Arm angle to prep pin pull
-    hal.moveForward(11, hal.MEDIUM);  //EO - 3/23
+    //hal.moveForward(11, hal.MEDIUM);  //EO - 3/23
+    while(true){
+        LCD.Write(hal.getX());
+        LCD.Write(" , ");
+        LCD.WriteLine(hal.getY());
+    }
+    hal.moveForward(3,0,hal.MEDIUM);
 
 
     //Pull pin and release pin
@@ -96,7 +110,7 @@ int main(void)
     //Move to top of ramp
     hal.moveBackward(3, hal.MEDIUM);
     hal.turnRight(30);
-    hal.moveBackward(7, hal.MEDIUM);  //EO - 3/23
+    hal.moveBackward(7, hal.                MEDIUM);  //EO - 3/23
     hal.turnLeft(30);
 
 
