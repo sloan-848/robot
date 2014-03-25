@@ -45,6 +45,8 @@ Robot::Robot(){
 
     rps->Enable();
     LCD.WriteLine("Sucessfully Enabled RPS");
+    startX = getX();
+    startY = getY();
 
     ovenCount = rps->Oven();
 
@@ -293,6 +295,34 @@ void Robot::moveForward(float distX, float distY, int power){
 	wait(SHORT);
 }	
 
+void Robot::forwardToXPoint(float pointX, int power){
+    int motorPercent = power;
+    int tolerance = 2;
+
+    rps->Enable();
+
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
+    leftMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(motorPercent-(power/15.0));
+
+    int avgCounts = 0;
+
+    while(!((getX() <= pointX+tolerance)&&(getX() >= pointX-tolerance))){
+        //normal run
+        if(avgCounts > 4){
+            rightMotor->SetPercent(motorPercent+(leftEncoder->Counts() - rightEncoder->Counts()));
+        }
+        avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+    }
+
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+    wait(SHORT);
+}
+
 /*
  *Move forward a specific distance given in INCHES
  *Also, requires the power percentage that the motors will use.
@@ -376,7 +406,7 @@ void Robot::moveBackward(float finalX, float finalY, int power){
 /*
  *Move the motors forward for a specified amount of time.
  */
-void Robot::timeForward(int time, int power){
+void Robot::timeForward(float time, int power){
     leftMotor->SetPercent(power);
     rightMotor->SetPercent(power-(power/15.0));
     Sleep(time*1.0);
@@ -389,13 +419,20 @@ void Robot::timeForward(int time, int power){
 /*
  *Move the motors backward for a specified amount of time.
  */
-void Robot::timeBack(int time, int power){
+void Robot::timeBack(float time, int power){
     leftMotor->SetPercent(power*(-1));
     rightMotor->SetPercent(power*(-1));
     Sleep(time*1.0);
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
     wait(SHORT);
+}
+
+/*
+ *Returns the robot's current heading, as reported by the RPS.
+ */
+int Robot::getHeading(){
+    return (rps->Heading());
 }
 
 /*
@@ -407,10 +444,9 @@ void Robot::turnLeft(int degrees){
     int tolerance = 2;
 
     rps->Enable();
-    leftEncoder->ResetCounts();
-    rightEncoder->ResetCounts();
 
-    int startDeg = rps->Heading();
+
+    int startDeg = getHeading();
 
     int finalDeg = startDeg + degrees;
     if(finalDeg >= 180){
@@ -419,11 +455,10 @@ void Robot::turnLeft(int degrees){
 
     LCD.Write("Final: ");
     LCD.WriteLine(finalDeg);
-    Sleep(.5);
     leftMotor->SetPercent((-1)*motorPercent);
     rightMotor->SetPercent(motorPercent);
 
-    while(!((rps->Heading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= rps->Heading())));
+    while(!((getHeading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= getHeading())));
 
     //stop wheel movement
     leftMotor->SetPercent(0);
@@ -440,10 +475,8 @@ void Robot::turnRight(int degrees){
     int tolerance = 2;
 
     rps->Enable();
-    leftEncoder->ResetCounts();
-    rightEncoder->ResetCounts();
 
-    int startDeg = rps->Heading();
+    int startDeg = getHeading();
 
     int finalDeg = startDeg-degrees;
     if(finalDeg < 0){
@@ -452,11 +485,11 @@ void Robot::turnRight(int degrees){
 
     LCD.Write("Final: ");
     LCD.WriteLine(finalDeg);
-    Sleep(.5);
+
     leftMotor->SetPercent(motorPercent);
     rightMotor->SetPercent((-1)*motorPercent);
 
-    while(!((rps->Heading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= rps->Heading())));
+    while(!((getHeading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= getHeading())));
 
     //stop wheel movement
     leftMotor->SetPercent(0);

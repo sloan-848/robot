@@ -25,10 +25,11 @@ public:
     int cdsColor();
     void moveForward(float distance, int power);
     void moveForward(float distX, float distY, int power);
+    void forwardToXPoint(float pointX, int power);
     void moveBackward(float distance, int power);
     void moveBackward(float distX, float distY, int power);
-    void timeForward(int time, int power);
-    void timeBack(int time, int power);
+    void timeForward(float time, int power);
+    void timeBack(float time, int power);
     void turnLeft(int time);
     void turnRight(int degrees);
     void setArmAngle(int LRangle, int UDangle);
@@ -37,6 +38,8 @@ public:
 
     float getX();
     float getY();
+    int getHeading();
+
 
     int checkCDS();
 
@@ -87,6 +90,9 @@ private:
     int ovenCount;
     int startLightValue;
     int scoopLightValue;
+
+    float startX;
+    float startY;
 
     //Private methods; used internally
 

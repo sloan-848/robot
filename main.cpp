@@ -46,7 +46,7 @@ int main(void)
     while(!hal.cdsStart());
     LCD.WriteLine("Lets do it!");
 
-    hal.timeForward(2.0,hal.SLOW);
+    hal.timeForward(1.5,hal.MEDIUM);
 
     //press button the required number of times
     for(int i = 0; i < hal.getOvenCount(); i++){
@@ -55,8 +55,10 @@ int main(void)
     }
     hal.setArmAngle(165,170);
 
-    hal.timeBack(1,hal.SLOW);
+    hal.timeBack(.7,hal.SLOW);
 
+    //prep arm for next task
+    hal.setArmAngle(167,121);
     hal.setArmAngle(0,121);  //EO - 3/23
 
 
@@ -68,9 +70,10 @@ int main(void)
     //hal.moveForward(25,hal.MEDIUM);  //EO - 3/23
     hal.moveForward(29,0,hal.MEDIUM);
 
+
     //Get into position to flip switch - also squares up
     hal.turnLeft(90);
-    hal.setArmAngle(116,135);
+    hal.setArmAngle(116,165);
     hal.timeForward(2,hal.SUPERFAST);
 
 
@@ -81,24 +84,23 @@ int main(void)
     //Get in position to pull pin
     //hal.moveBackward(8, hal.MEDIUM);  //EO - 3/23
     hal.moveBackward(0,6,hal.MEDIUM);
-    hal.turnRight(90);
+
+    hal.turnRight(89);
     hal.setArmAngle(178,165);  //Arm angle to prep pin pull
     //hal.moveForward(11, hal.MEDIUM);  //EO - 3/23
-    while(true){
-        LCD.Write(hal.getX());
-        LCD.Write(" , ");
-        LCD.WriteLine(hal.getY());
-    }
-    hal.moveForward(3,0,hal.MEDIUM);
+    hal.forwardToXPoint(34,hal.MEDIUM);
 
 
     //Pull pin and release pin
-    hal.setArmAngle(178,126);  //Arm angle to pull pin
-    hal.moveBackward(.5, hal.SLOW);  //Distance to get even with skid
+    hal.setArmAngle(178,136);  //Arm angle to pull pin
 
-    //Drop Pin
+    hal.turnRight(20);
     hal.setArmAngle(0,126);
     hal.setArmAngle(0,67);
+    hal.turnLeft(20);
+
+    hal.moveBackward(.5, hal.SLOW);  //Distance to get even with skid
+
 
     //Prep for skid pickup
     hal.turnLeft(90);
@@ -110,7 +112,7 @@ int main(void)
     //Move to top of ramp
     hal.moveBackward(3, hal.MEDIUM);
     hal.turnRight(30);
-    hal.moveBackward(7, hal.                MEDIUM);  //EO - 3/23
+    hal.moveBackward(7, hal.MEDIUM);  //EO - 3/23
     hal.turnLeft(30);
 
 
