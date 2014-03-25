@@ -227,6 +227,53 @@ void Robot::moveForward(float distance, int power){
 }
 
 /*
+ *Move forward to a specific coordinate. One parameter must be zero.
+ */
+void Robot::moveToForward(int finalX, int finalY, int power){
+	int motorPercent = power;
+	int tolerance = 2;
+	
+	RPS->Enable();
+
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
+    leftMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(motorPercent-(power/15.0));
+
+    int avgCounts = 0;
+	
+    //split for navigation  
+	if(finalX == 0){
+		//move until get to y coordinate
+		while(!((RPS->y() <= finalY+2)&&(RPS->y() >= finalY-2)){
+			//normal run
+			if(avgCounts > 4){
+				rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()) - rightEncoder->Counts()));
+			}
+			avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+		}  
+	}
+	else if(finalY == 0){
+		//move until get to y coordinate
+		while(!((RPS->x() <= finalX+2)&&(RPS->x() >= finalX-2)){
+			//normal run
+			if(avgCounts > 4){
+				rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()) - rightEncoder->Counts()));
+			}
+			avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+		}  
+	}
+	else{
+		LCD.WriteLine("You fail at method contracts. Shame on you.");
+	}
+	//stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+	wait(SHORT);
+}	
+	
+/*
  *Move forward a specific distance given in INCHES
  *Also, requires the power percentage that the motors will use.
  */
@@ -246,14 +293,8 @@ void Robot::moveBackward(float distance, int power){
     //while the average counts between the wheels are less than the final desired count
     while(avgCounts < estCounts){
         //normal run
-        LCD.Write("Left: ");
-        LCD.Write(leftEncoder->Counts());
-        LCD.Write("  Right: ");
-        LCD.WriteLine(rightEncoder->Counts());
         if(avgCounts > 4){
             rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
-            LCD.Write("Correction: ");
-            LCD.WriteLine(rightEncoder->Counts() - leftEncoder->Counts());
         }
         avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     }
@@ -263,6 +304,50 @@ void Robot::moveBackward(float distance, int power){
     wait(SHORT);
 }
 
+/*
+ *Move forward to a specific coordinate. One parameter must be zero.
+ */
+void Robot::moveToBackward(int finalX, int finalY, int power){
+	int motorPercent = power*(-1);
+	int tolerance = 2;
+	
+	RPS->Enable();
+
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
+    leftMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(motorPercent);
+
+    int avgCounts = 0;
+	
+    //split for navigation  
+	if(finalX == 0){
+		//move until get to y coordinate
+		while(!((RPS->y() <= finalY+tolerance)&&(RPS->y() >= finalY-tolerance)){
+			if(avgCounts > 4){
+				rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
+			}
+			avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+		}  
+	}
+	else if(finalY == 0){
+		//move until get to y coordinate
+		while(!((RPS->x() <= finalX+tolerance)&&(RPS->x() >= finalX-tolerance)){
+			if(avgCounts > 4){
+				rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
+			}
+			avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+		}  
+	}
+	else{
+		LCD.WriteLine("You fail at method contracts. Shame on you.");
+	}
+	//stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+	wait(SHORT);
+}	
 /*
  *Move the motors forward for a specified amount of time.
  */

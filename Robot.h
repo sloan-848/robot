@@ -23,7 +23,9 @@ public:
     bool cdsStart();
     int cdsColor();
     void moveForward(float distance, int power);
+	void moveToForward(int finalX, int finalY, int power);
     void moveBackward(float distance, int power);
+	void moveToBackward(int finalX, int finalY, int power);
     void timeForward(int time, int power);
     void timeBack(int time, int power);
     void turnLeft(int time);
