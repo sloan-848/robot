@@ -291,7 +291,7 @@ void Robot::moveForward(float distX, float distY, int power){
  */
 void Robot::forwardToXPoint(float pointX, int power){
     int motorPercent = power;
-    float tolerance = .5;
+    float tolerance = .25;
 
     rps->Enable();
 
@@ -425,7 +425,7 @@ void Robot::timeBack(float time, int power){
 /*
  *Returns the robot's current heading, as reported by the RPS.
  */
-int Robot::getHeading(){
+float Robot::getHeading(){
     return (rps->Heading());
 }
 
@@ -435,14 +435,16 @@ int Robot::getHeading(){
  */
 void Robot::turnLeft(int degrees){
     int motorPercent= 40;
-    int tolerance = 2;
+    int tolerance = 3;
 
     rps->Enable();
 
 
-    int startDeg = getHeading();
+    float startDeg = getHeading();
+    LCD.Write("Start: ");
+    LCD.WriteLine(startDeg);
 
-    int finalDeg = startDeg + degrees;
+    float finalDeg = startDeg + degrees;
     if(finalDeg >= 180){
         finalDeg -= 180;
     }
@@ -452,11 +454,21 @@ void Robot::turnLeft(int degrees){
     leftMotor->SetPercent((-1)*motorPercent);
     rightMotor->SetPercent(motorPercent);
 
-    while(!((getHeading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= getHeading())));
+    if(degrees > 20){
+        Sleep(1.5);
+    }
+    else{
+        Sleep(.5);
+    }
+
+    while(!((getHeading() < (finalDeg + tolerance))&&( (finalDeg - tolerance) < getHeading())));
 
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+
+    LCD.Write("Actual Final: ");
+    LCD.WriteLine(getHeading());
     wait(SHORT);
 }
 
@@ -466,13 +478,15 @@ void Robot::turnLeft(int degrees){
  */
 void Robot::turnRight(int degrees){
     int motorPercent= 40;
-    int tolerance = 2;
+    int tolerance = 3;
 
     rps->Enable();
 
-    int startDeg = getHeading();
+    float startDeg = getHeading();
+    LCD.Write("Start: ");
+    LCD.WriteLine(startDeg);
 
-    int finalDeg = startDeg-degrees;
+    float finalDeg = startDeg-degrees;
     if(finalDeg < 0){
         finalDeg += 180;
     }
@@ -483,11 +497,21 @@ void Robot::turnRight(int degrees){
     leftMotor->SetPercent(motorPercent);
     rightMotor->SetPercent((-1)*motorPercent);
 
-    while(!((getHeading() <= finalDeg + tolerance)&&( finalDeg - tolerance <= getHeading())));
+    if(degrees > 20){
+        Sleep(1.5);
+    }
+    else{
+        Sleep(.5);
+    }
+
+    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading())));
 
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+
+    LCD.Write("Actual Final: ");
+    LCD.WriteLine(getHeading());
     wait(SHORT);
 }
 

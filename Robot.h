@@ -30,7 +30,7 @@ public:
     void moveBackward(float distX, float distY, int power);
     void timeForward(float time, int power);
     void timeBack(float time, int power);
-    void turnLeft(int time);
+    void turnLeft(int degrees);
     void turnRight(int degrees);
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
@@ -38,7 +38,7 @@ public:
 
     float getX();
     float getY();
-    int getHeading();
+    float getHeading();
 
 
     int checkCDS();
