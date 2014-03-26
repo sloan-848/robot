@@ -176,20 +176,11 @@ bool Robot::cdsStart(){
  *Used in shop.
  */
 int Robot::cdsColor(){
-    float redVal = 5;
-    float blueVal = 22;
-    float blackVal = 50;
     if(checkCDS() < 12){
         return REDLIGHT;
     }
-    else if((checkCDS() > 15)&&(checkCDS() < 40)){
-        return BLUELIGHT;
-    }
-    else if(checkCDS() >= 40){
-        return 0;
-    }
     else{
-        return 0;
+        return BLUELIGHT;
     }
 }
 
@@ -295,9 +286,12 @@ void Robot::moveForward(float distX, float distY, int power){
 	wait(SHORT);
 }	
 
+/*
+ *Move forward to a specific x point away from our starting position
+ */
 void Robot::forwardToXPoint(float pointX, int power){
     int motorPercent = power;
-    int tolerance = 2;
+    float tolerance = .5;
 
     rps->Enable();
 

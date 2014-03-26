@@ -88,7 +88,7 @@ int main(void)
     hal.turnRight(89);
     hal.setArmAngle(178,165);  //Arm angle to prep pin pull
     //hal.moveForward(11, hal.MEDIUM);  //EO - 3/23
-    hal.forwardToXPoint(34,hal.MEDIUM);
+    hal.forwardToXPoint(6.0,hal.MEDIUM);
 
 
     //Pull pin and release pin
