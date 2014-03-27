@@ -45,8 +45,7 @@ Robot::Robot(){
 
     rps->Enable();
     LCD.WriteLine("Sucessfully Enabled RPS");
-    startX = getX();
-    startY = getY();
+
 
     ovenCount = rps->Oven();
 
@@ -215,7 +214,7 @@ void Robot::moveForward(float distance, int power){
     int estCounts = (TOTALCOUNTS*distance)/(2*PI*WHEELRADIUS);
 
     leftMotor->SetPercent(motorPercent);
-    rightMotor->SetPercent(motorPercent-(power/15.0));
+    rightMotor->SetPercent(motorPercent);
 
     int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
 
@@ -434,8 +433,8 @@ float Robot::getHeading(){
  *Uses RPS headings.
  */
 void Robot::turnLeft(int degrees){
-    int motorPercent= 40;
-    int tolerance = 3;
+    int motorPercent= 50;
+    int tolerance = 5;
 
     rps->Enable();
 
@@ -455,7 +454,7 @@ void Robot::turnLeft(int degrees){
     rightMotor->SetPercent(motorPercent);
 
     if(degrees > 20){
-        Sleep(1.5);
+        Sleep(.75);
     }
     else{
         Sleep(.5);
@@ -477,8 +476,8 @@ void Robot::turnLeft(int degrees){
  *Uses RPS headings.
  */
 void Robot::turnRight(int degrees){
-    int motorPercent= 40;
-    int tolerance = 3;
+    int motorPercent= 50;
+    int tolerance = 5;
 
     rps->Enable();
 
@@ -494,17 +493,29 @@ void Robot::turnRight(int degrees){
     LCD.Write("Final: ");
     LCD.WriteLine(finalDeg);
 
+    int i = 0;
+    bool finished = false;
+    long timeStart = time_t();
     leftMotor->SetPercent(motorPercent);
     rightMotor->SetPercent((-1)*motorPercent);
 
     if(degrees > 20){
-        Sleep(1.5);
+        Sleep(.75);
     }
     else{
         Sleep(.5);
     }
 
-    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading())));
+    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading()))&&(!finished)){
+        i++;
+        if(i > 5){
+            if(timeStart - time_t() > (int)degrees/45.0){
+                LCD.WriteLine("I'm stuuuuuuuck!");
+                finished = true;
+            }
+            i = 0;
+        }
+    }
 
     //stop wheel movement
     leftMotor->SetPercent(0);
@@ -514,6 +525,59 @@ void Robot::turnRight(int degrees){
     LCD.WriteLine(getHeading());
     wait(SHORT);
 }
+
+
+/*
+ *Turns the robot right to a specific heading.
+ *Uses RPS headings.
+ */
+void Robot::turnToHeading(float degree){
+    int motorPercent= 50;
+    int tolerance = 5;
+
+    rps->Enable();
+
+    float startDeg = getHeading();
+    LCD.Write("Start: ");
+    LCD.WriteLine(startDeg);
+
+
+    LCD.Write("Final: ");
+    LCD.WriteLine(degree);
+
+    int i = 0;
+    bool finished = false;
+    long timeStart = time_t();
+    leftMotor->SetPercent((-1)*motorPercent);
+    rightMotor->SetPercent(motorPercent);
+
+    if(degree > 20){
+        Sleep(.75);
+    }
+    else{
+        Sleep(.5);
+    }
+
+    while(!((getHeading() < degree + tolerance)&&( degree - tolerance < getHeading()))&&(!finished)){
+        i++;
+        if(i > 5){
+            if(timeStart - time_t() >  5){
+                LCD.WriteLine("I'm stuuuuuuuck!");
+                finished = true;
+            }
+            i = 0;
+        }
+    }
+
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+
+    LCD.Write("Actual Final: ");
+    LCD.WriteLine(getHeading());
+    wait(SHORT);
+}
+
 
 /*
  *Sets the arm's servo motors to specified values. UD first, then LR.

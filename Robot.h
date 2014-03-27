@@ -9,6 +9,7 @@
 #include <FEHUtility.h>
 #include <FEHWONKA.h>
 #include <string.h>
+#include <time.h>
 #define START 0
 #define SCOOP 1
 
@@ -32,6 +33,7 @@ public:
     void timeBack(float time, int power);
     void turnLeft(int degrees);
     void turnRight(int degrees);
+    void turnToHeading(float degree);
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
     void wait(float time);
@@ -91,8 +93,8 @@ private:
     int startLightValue;
     int scoopLightValue;
 
-    float startX;
-    float startY;
+    float offsetX;
+    float offsetY;
 
     //Private methods; used internally
 

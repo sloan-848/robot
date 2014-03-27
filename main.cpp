@@ -44,7 +44,7 @@ int main(void)
     while(!hal.cdsStart());
     LCD.WriteLine("Lets do it!");
 
-
+    hal.setArmAngle(165,170);
 
     hal.timeForward(1.0,hal.MEDIUM);
 
@@ -67,8 +67,8 @@ int main(void)
 
 
     //move forward to next task
-    //hal.moveForward(25,hal.MEDIUM);  //EO - 3/23
-    hal.moveForward(29,0,hal.FAST);
+    hal.moveForward(26.5,hal.FAST);  //Move forward
+    //hal.moveForward(29,0,hal.FAST);
 
 
     //Get into position to flip switch - also squares up
@@ -83,6 +83,7 @@ int main(void)
     //Re-square up with wall
     hal.timeForward(.5,hal.SUPERFAST);
 
+    float straightHeading = hal.getHeading();
 
     //Get in position to pull pin
     //hal.moveBackward(8, hal.MEDIUM);  //EO - 3/23
@@ -92,17 +93,32 @@ int main(void)
     hal.moveForward(6, hal.MEDIUM);  //EO - 3/23
 
 
-    /*Pull pin and release pin code
-    hal.setArmAngle(178,136);  //Arm angle to pull pin
 
+
+
+    /*WORKS TO HERE*/
+
+
+
+
+
+
+
+
+
+
+
+
+    /*
+    hal.setArmAngle(178,136);  //Arm angle to pull pin
     hal.setArmAngle(0,126);
     hal.setArmAngle(0,67);
     */
 
     //Prep for skid pickup
     hal.turnLeft(45);
-    hal.moveForward(4.0,hal.MEDIUM);
-    hal.turnLeft(45);
+    hal.moveForward(1.5,hal.MEDIUM);
+    hal.turnToHeading(straightHeading);
 
     //Get ready to square up
     hal.timeForward(3.0,hal.SUPERFAST);
@@ -110,60 +126,75 @@ int main(void)
     hal.moveBackward(8,hal.MEDIUM);
 
     hal.setArmAngle(20,10);  //Arm angle prep to pick up skid
-    hal.timeForward(3, hal.SLOW);  //EO - 3/23
-    hal.setArmAngle(20,70);  //Arm angle to raise skid
+    hal.timeForward(1.5, hal.FAST);  //EO - 3/23
+    hal.setArmAngle(20,50);  //Arm angle to raise skid
 
+    if(hal.getHeading() < 160){
+        hal.turnToHeading(straightHeading);
+    }
 
-    //Move to top of ramp
+    /* Move to top of ramp - V1.0
     hal.moveBackward(5, hal.MEDIUM);
     hal.turnRight(35);
     hal.moveBackward(3, hal.MEDIUM);
     hal.turnRight(20);
     hal.moveBackward(9, hal.MEDIUM);  //EO - 3/23
-    hal.turnLeft(45);
+    hal.turnLeft(45);*/
+
+    //Move to top of ramp - V2.0
+    for(int i = 0; i < 5; i++){
+        hal.moveBackward(2,hal.MEDIUM);
+        hal.turnRight(10);
+    }
+    hal.moveBackward(9.5,hal.MEDIUM);
+
+
+
+    //Align to ramp
+    hal.turnToHeading(straightHeading);
 
 
     //Move down ramp - PT 3/21
     LCD.WriteLine("Moving down the ramp.");
-    hal.moveBackward(26,hal.MEDIUM);  //EO - 3/23
+    hal.moveBackward(24,hal.MEDIUM);  //EO - 3/23
 
 
     //Check CDS color - PT 3/21
-    LCD.WriteLine("Reading Lig ht");
+    LCD.WriteLine("Reading Light");
     while(hal.cdsColor() == 0);
     LCD.Write("COLOR: ");
-    if(hal.cdsColor() == hal.REDLIGHT){
+    if(false){
         LCD.WriteLine("Red");
 
         //Move to Red Counter
         hal.turnLeft(35);
-        hal.moveBackward(11,hal.SLOW);
+        hal.moveBackward(11,hal.MEDIUM);
         hal.turnRight(35);
-        hal.timeBack(3,hal.SLOW);
+        hal.timeBack(3,hal.SUPERFAST);
 
 
         //Drop Scoop
 
 
         //Move to chiller
-        hal.moveForward(4,hal.SLOW);
+        hal.moveForward(4,hal.MEDIUM);
         hal.turnLeft(90);
         hal.moveForward(11, hal.MEDIUM);  //EO - 3/23
         hal.turnRight(45);
         hal.moveForward(5,hal.MEDIUM);  //Guess - 3/23
         hal.turnRight(45);
         hal.setArmAngle(20,20);
-        hal.moveForward(3, hal.SLOW);  //Distance for skid to be inside chiller
+        hal.moveForward(3, hal.MEDIUM);  //Distance for skid to be inside chiller
 
     }
-    else if(hal.cdsColor() == hal.BLUELIGHT){
+    else if(true){
         LCD.WriteLine("Blue");
 
         //Move to Red Counter
         hal.turnRight(35);
-        hal.moveBackward(11,hal.SLOW);
+        hal.moveBackward(11,hal.MEDIUM);
         hal.turnLeft(35);
-        hal.timeBack(3,hal.SLOW);
+        hal.timeBack(3,hal.SUPERFAST);
 
 
         //Drop Scoop
@@ -178,27 +209,32 @@ int main(void)
     }
     else{
         LCD.WriteLine("I'm Broken!");
+        hal.timeBack(3.0, hal.MEDIUM);
+        hal.moveForward(5.0, hal.MEDIUM);
         hal.turnLeft(90);
         hal.setArmAngle(20,20);
         hal.turnRight(45);
         hal.moveForward(5,hal.MEDIUM);  //Guess - 3/23
         hal.turnRight(45);
-        hal.moveForward(3, hal.SLOW);  //Distance for skid to be inside chiller
+        hal.moveForward(3, hal.MEDIUM);  //Distance for skid to be inside chiller
     }
 
 
     //Drop skid in chiller and prep for ramp ascension
     hal.setArmAngle(20,0);  //Arm angle to put down scoop
     hal.moveBackward(4.0, hal.MEDIUM);
-    hal.turnRight(90);
-    hal.moveForward(11, hal.MEDIUM);  //EO - 3/23
+    hal.setArmAngle(20,165);
+    hal.setArmAngle(116,165);
     hal.turnLeft(90);
+    hal.timeForward(2.0, hal.FAST);
+    hal.moveBackward(11, hal.FAST);  //EO - 3/23
+    hal.turnRight(90);
 
 
     //Move up ramp and into ChargeZone
-    hal.setArmAngle(116,165);
-    hal.moveForward(25, hal.SUPERFAST);
-    hal.turnLeft(90);
+
+    hal.moveForward(30, hal.SUPERFAST);
+    hal.turnLeft(100);
     hal.moveForward(40, hal.SUPERFAST);
 
     //End program
