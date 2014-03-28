@@ -63,11 +63,12 @@ int main(void)
 
 
     //turn to prep for next task
-    hal.turnRight(80);
+    //hal.turnRight(80);
+    hal.turnRightTime(2.3);
 
 
     //move forward to next task
-    hal.moveForward(26.5,hal.FAST);  //Move forward
+    hal.moveForward(23.5,hal.FAST);  //Move forward
     //hal.moveForward(29,0,hal.FAST);
 
 
@@ -118,7 +119,7 @@ int main(void)
     //Prep for skid pickup
     hal.turnLeft(45);
     hal.moveForward(1.5,hal.MEDIUM);
-    hal.turnToHeading(straightHeading);
+    hal.turnLeft(45);
 
     //Get ready to square up
     hal.timeForward(3.0,hal.SUPERFAST);
@@ -142,21 +143,20 @@ int main(void)
     hal.turnLeft(45);*/
 
     //Move to top of ramp - V2.0
-    for(int i = 0; i < 5; i++){
-        hal.moveBackward(2,hal.MEDIUM);
-        hal.turnRight(10);
+    for(int i = 0; i < 2; i++){
+        hal.moveBackward(5,hal.MEDIUM);
+        hal.turnRight(20);
     }
-    hal.moveBackward(9.5,hal.MEDIUM);
+    hal.moveBackward(8,hal.MEDIUM);
 
-
-
+    LCD.WriteLine("I'm Going Straight!");
     //Align to ramp
     hal.turnToHeading(straightHeading);
 
 
     //Move down ramp - PT 3/21
     LCD.WriteLine("Moving down the ramp.");
-    hal.moveBackward(24,hal.MEDIUM);  //EO - 3/23
+    hal.moveBackward(22,hal.FAST);  //EO - 3/23
 
 
     //Check CDS color - PT 3/21
@@ -191,21 +191,19 @@ int main(void)
         LCD.WriteLine("Blue");
 
         //Move to Red Counter
-        hal.turnRight(35);
-        hal.moveBackward(11,hal.MEDIUM);
+        hal.turnRight(40);
+        hal.moveBackward(12,hal.MEDIUM);
         hal.turnLeft(35);
-        hal.timeBack(3,hal.SUPERFAST);
+        hal.timeBack(1.5,hal.MAX);
 
 
         //Drop Scoop
 
 
         //Move to chiller
-        hal.moveForward(1,hal.MEDIUM);
-        hal.turnLeft(25);  //EO - 3/23
-        hal.moveForward(3,hal.MEDIUM); //Guess - 3/23
-        hal.turnRight(25);  //EO - 3/23
-        hal.moveForward(5, hal.MEDIUM);  //EO - 3/23
+        hal.moveForward(2,hal.MEDIUM);
+        hal.turnLeft(15);  //EO - 3/23
+        hal.moveForward(7,hal.FAST); //Guess - 3/23
     }
     else{
         LCD.WriteLine("I'm Broken!");
@@ -222,10 +220,12 @@ int main(void)
 
     //Drop skid in chiller and prep for ramp ascension
     hal.setArmAngle(20,0);  //Arm angle to put down scoop
+    hal.moveForward(1.5,hal.MEDIUM);
+    hal.moveBackward(1.5,hal.MEDIUM);
     hal.moveBackward(4.0, hal.MEDIUM);
     hal.setArmAngle(20,165);
     hal.setArmAngle(116,165);
-    hal.turnLeft(90);
+    hal.turnLeft(75);
     hal.timeForward(2.0, hal.FAST);
     hal.moveBackward(11, hal.FAST);  //EO - 3/23
     hal.turnRight(90);
@@ -233,8 +233,8 @@ int main(void)
 
     //Move up ramp and into ChargeZone
 
-    hal.moveForward(30, hal.SUPERFAST);
-    hal.turnLeft(100);
+    hal.moveForward(33, hal.SUPERFAST);
+    hal.turnLeft(90);
     hal.moveForward(40, hal.SUPERFAST);
 
     //End program

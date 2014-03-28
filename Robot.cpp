@@ -472,6 +472,23 @@ void Robot::turnLeft(int degrees){
 }
 
 /*
+ *Turn by time
+ */
+void Robot::turnRightTime(float time){
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
+    leftMotor->SetPercent(50);
+    rightMotor->SetPercent(-50);
+
+    wait(time*1.0);
+
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+}
+
+/*
  *Turns the robot right for a certain number of degrees.
  *Uses RPS headings.
  */

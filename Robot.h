@@ -33,6 +33,7 @@ public:
     void timeBack(float time, int power);
     void turnLeft(int degrees);
     void turnRight(int degrees);
+    void turnRightTime(float time);
     void turnToHeading(float degree);
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
