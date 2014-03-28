@@ -68,12 +68,12 @@ int main(void)
 
 
     //move forward to next task
-    hal.moveForward(23.5,hal.FAST);  //Move forward
+    hal.moveForward(24,hal.FAST);  //Move forward
     //hal.moveForward(29,0,hal.FAST);
 
 
     //Get into position to flip switch - also squares up
-    hal.turnLeft(90);
+    hal.turnLeft(75);
     hal.setArmAngle(116,165);
     hal.timeForward(2,hal.SUPERFAST);
 
@@ -130,9 +130,11 @@ int main(void)
     hal.timeForward(1.5, hal.FAST);  //EO - 3/23
     hal.setArmAngle(20,50);  //Arm angle to raise skid
 
+    /*
     if(hal.getHeading() < 160){
         hal.turnToHeading(straightHeading);
     }
+    */
 
     /* Move to top of ramp - V1.0
     hal.moveBackward(5, hal.MEDIUM);

@@ -214,7 +214,7 @@ void Robot::moveForward(float distance, int power){
     int estCounts = (TOTALCOUNTS*distance)/(2*PI*WHEELRADIUS);
 
     leftMotor->SetPercent(motorPercent);
-    rightMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(motorPercent-(power/15.0));
 
     int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
 
