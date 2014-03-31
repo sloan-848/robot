@@ -39,6 +39,18 @@ int main(void)
     //Set initial arm value
     hal.setArmAngle(165,90);
 
+    LCD.WriteLine("Please put me on an edge");
+    Sleep(2.0);
+    while(!hal.getSwitchPress());
+    float straightH = hal.getHeading();
+    Sleep(2.0);
+    LCD.WriteLine("Tell me when you're ready!");
+    Sleep(1.0);
+    while(!hal.getSwitchPress());
+    LCD.Clear(CLEARCOLOR);
+
+
+
     //wait for light to start
     LCD.WriteLine("Waiting for light.");
     while(!hal.cdsStart());
@@ -64,7 +76,8 @@ int main(void)
 
     //turn to prep for next task
     //hal.turnRight(80);
-    hal.turnRightTime(2.3);
+    hal.turnRightCheck(90,'x',1);
+    //hal.turnRightTime(2.3);
 
 
     //move forward to next task
@@ -73,7 +86,8 @@ int main(void)
 
 
     //Get into position to flip switch - also squares up
-    hal.turnLeft(75);
+    hal.turnLeftToHeading(straightH);
+    //hal.turnLeft(75);
     hal.setArmAngle(116,165);
     hal.timeForward(2,hal.SUPERFAST);
 
@@ -84,7 +98,6 @@ int main(void)
     //Re-square up with wall
     hal.timeForward(.5,hal.SUPERFAST);
 
-    float straightHeading = hal.getHeading();
 
     //Get in position to pull pin
     //hal.moveBackward(8, hal.MEDIUM);  //EO - 3/23
@@ -92,22 +105,6 @@ int main(void)
 
     hal.turnRight(89);
     hal.moveForward(6, hal.MEDIUM);  //EO - 3/23
-
-
-
-
-
-    /*WORKS TO HERE*/
-
-
-
-
-
-
-
-
-
-
 
 
     /*
@@ -144,16 +141,24 @@ int main(void)
     hal.moveBackward(9, hal.MEDIUM);  //EO - 3/23
     hal.turnLeft(45);*/
 
-    //Move to top of ramp - V2.0
+    /*Move to top of ramp - V2.0
     for(int i = 0; i < 2; i++){
         hal.moveBackward(5,hal.MEDIUM);
         hal.turnRight(20);
     }
     hal.moveBackward(8,hal.MEDIUM);
+    */
+
+    //Move to to of ramp - V3.0
+    hal.moveBackward(3.0,hal.MEDIUM);
+    hal.turnLeft(90);
+    hal.moveForward(6.0,hal.MEDIUM);
+    hal.turnRight(90);
+
 
     LCD.WriteLine("I'm Going Straight!");
     //Align to ramp
-    hal.turnToHeading(straightHeading);
+    //hal.turnToHeading(straightHeading);
 
 
     //Move down ramp - PT 3/21

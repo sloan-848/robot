@@ -64,6 +64,19 @@ int Robot::getOvenCount(){
 }
 
 /*
+ *Returns whether any of the switches
+ *(on the switch board) are pressed
+ */
+bool Robot::getSwitchPress(){
+    if(switch1->Value() && switch2->Value() && switch3->Value()){
+        return false;
+    }
+    else{
+        return true;
+    }
+}
+
+/*
  *Sleeps a specific amount of time
  */
 void Robot::wait(float time){
@@ -545,10 +558,10 @@ void Robot::turnRight(int degrees){
 
 
 /*
- *Turns the robot right to a specific heading.
+ *Turns the robot Light to a specific heading.
  *Uses RPS headings.
  */
-void Robot::turnToHeading(float degree){
+void Robot::turnLeftToHeading(float degree){
     int motorPercent= 50;
     int tolerance = 5;
 
@@ -589,6 +602,214 @@ void Robot::turnToHeading(float degree){
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+
+    LCD.Write("Actual Final: ");
+    LCD.WriteLine(getHeading());
+    wait(SHORT);
+}
+
+/*
+ *Turns the robot Right to a specific heading.
+ *Uses RPS headings.
+ */
+void Robot::turnRightToHeading(float degree){
+    int motorPercent= 50;
+    int tolerance = 5;
+
+    rps->Enable();
+
+    float startDeg = getHeading();
+    LCD.Write("Start: ");
+    LCD.WriteLine(startDeg);
+
+
+    LCD.Write("Final: ");
+    LCD.WriteLine(degree);
+
+    int i = 0;
+    bool finished = false;
+    long timeStart = time_t();
+    leftMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent((-1)*motorPercent);
+
+    if(degree > 20){
+        Sleep(.75);
+    }
+    else{
+        Sleep(.5);
+    }
+
+    while(!((getHeading() < degree + tolerance)&&( degree - tolerance < getHeading()))&&(!finished)){
+        i++;
+        if(i > 5){
+            if(timeStart - time_t() >  5){
+                LCD.WriteLine("I'm stuuuuuuuck!");
+                finished = true;
+            }
+            i = 0;
+        }
+    }
+
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+
+    LCD.Write("Actual Final: ");
+    LCD.WriteLine(getHeading());
+    wait(SHORT);
+}
+
+/*
+ *Turns left a specified number of degrees,
+ *then checks whether it has turned the correct number of degrees,
+ *or 180 more.
+ */
+void Robot::turnLeftCheck(float degrees, char directionC, int direction){
+    int motorPercent= 50;
+    int tolerance = 5;
+    bool finished = false;
+
+    rps->Enable();
+
+
+    float startDeg = getHeading();
+    LCD.Write("Start: ");
+    LCD.WriteLine(startDeg);
+
+    float finalDeg = startDeg + degrees;
+    if(finalDeg >= 180){
+        finalDeg -= 180;
+    }
+
+    LCD.Write("Final: ");
+    LCD.WriteLine(finalDeg);
+    leftMotor->SetPercent((-1)*motorPercent);
+    rightMotor->SetPercent(motorPercent);
+
+    while(!finished){
+        if(degrees > 20){
+            Sleep(.75);
+        }
+        else{
+            Sleep(.5);
+        }
+
+        while(!((getHeading() < (finalDeg + tolerance))&&( (finalDeg - tolerance) < getHeading())));
+
+        //stop wheel movement
+        leftMotor->SetPercent(0);
+        rightMotor->SetPercent(0);
+
+        int myX = getX();
+        int myY = getY();
+        moveForward(.6,MEDIUM);
+
+        int correct;
+        if(directionC == 'x'){
+            correct = direction/(getX() - myX);
+        }
+        else if(directionC == 'y'){
+            correct = direction/(getY() - myY);
+        }
+        else{
+            LCD.WriteLine("Will sucks at coding!");
+        }
+
+        moveBackward(.6,MEDIUM);
+        if(correct == 1){
+            finished = true;
+        }
+        else{
+            LCD.WriteLine("I did it wrong!");
+        }
+    }
+
+    LCD.Write("Actual Final: ");
+    LCD.WriteLine(getHeading());
+    wait(SHORT);
+}
+
+
+/*
+ *Turns RIGHT a specified number of degrees,
+ *then checks whether it has turned the correct number of degrees,
+ *or 180 more.
+ */
+void Robot::turnRightCheck(float degrees, char directionC, int direction){
+    int motorPercent= 50;
+    int tolerance = 5;
+    bool finished = false;
+
+    rps->Enable();
+
+
+    float startDeg = getHeading();
+    LCD.Write("Start: ");
+    LCD.WriteLine(startDeg);
+
+    float finalDeg = startDeg + degrees;
+    if(finalDeg >= 180){
+        finalDeg -= 180;
+    }
+
+    LCD.Write("Final: ");
+    LCD.WriteLine(finalDeg);
+
+
+    while(!finished){
+        leftMotor->SetPercent(motorPercent);
+        rightMotor->SetPercent((-1)*motorPercent);
+
+        if(degrees > 20){
+            Sleep(.75);
+        }
+        else{
+            Sleep(.5);
+        }
+
+        while(!((getHeading() < (finalDeg + tolerance))&&( (finalDeg - tolerance) < getHeading())));
+
+        //stop wheel movement
+        leftMotor->SetPercent(0);
+        rightMotor->SetPercent(0);
+
+        int myX = getX();
+        int myY = getY();
+
+        Sleep(.2);
+
+        moveForward(.8,MEDIUM);
+
+        if(directionC == 'x'){
+            if(direction > 0){
+                if(getX() > myX){
+                    finished = true;
+                }
+            }
+            else if(direction < 0){
+                if(getX() < myX){
+                    finished = true;
+                }
+            }
+        }
+        else if(directionC == 'y'){
+            if(direction > 0){
+                if(getY() > myY){
+                    finished = true;
+                }
+            }
+            else if(direction < 0){
+                if(getY() < myY){
+                    finished = true;
+                }
+            }
+        }
+
+        moveBackward(.8,MEDIUM);
+        if(!finished){
+           LCD.WriteLine("I did it wrong!");
+        }
+    }
 
     LCD.Write("Actual Final: ");
     LCD.WriteLine(getHeading());

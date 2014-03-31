@@ -21,9 +21,9 @@ public:
     Robot();
 
     //public methods for control and input
-    void findAngle();
     bool cdsStart();
     int cdsColor();
+
     void moveForward(float distance, int power);
     void moveForward(float distX, float distY, int power);
     void forwardToXPoint(float pointX, int power);
@@ -31,10 +31,16 @@ public:
     void moveBackward(float distX, float distY, int power);
     void timeForward(float time, int power);
     void timeBack(float time, int power);
+
     void turnLeft(int degrees);
+    void turnLeftCheck(float degrees, char directionC, int direction);
+    void turnRightCheck(float degrees, char directionC, int direction);
     void turnRight(int degrees);
     void turnRightTime(float time);
-    void turnToHeading(float degree);
+    void turnLeftToHeading(float degree);
+    void turnRightToHeading(float degree);
+
+    void findAngle();
     void setArmAngle(int LRangle, int UDangle);
     int getOvenCount();
     void wait(float time);
@@ -42,6 +48,8 @@ public:
     float getX();
     float getY();
     float getHeading();
+
+    bool getSwitchPress();
 
 
     int checkCDS();
