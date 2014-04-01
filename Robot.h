@@ -29,6 +29,7 @@ public:
     void forwardToXPoint(float pointX, int power);
     void moveBackward(float distance, int power);
     void moveBackward(float distX, float distY, int power);
+    void moveBackwardToLight(int timeOut, int power, int lightLevel);
     void timeForward(float time, int power);
     void timeBack(float time, int power);
 

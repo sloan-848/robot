@@ -227,24 +227,23 @@ void Robot::moveForward(float distance, int power){
     int estCounts = (TOTALCOUNTS*distance)/(2*PI*WHEELRADIUS);
 
     leftMotor->SetPercent(motorPercent);
-    rightMotor->SetPercent(motorPercent-(power/15.0));
+    rightMotor->SetPercent(motorPercent);
 
     int avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
 
     //while the average counts between the wheels are less than the final desired count
-    int i = 0;
     while(avgCounts < estCounts){
-        i++;
         //normal run
         if(avgCounts > 4){
-            rightMotor->SetPercent(motorPercent+((leftEncoder->Counts()) - rightEncoder->Counts()));
+            rightMotor->SetPercent(motorPercent+2*(leftEncoder->Counts() - rightEncoder->Counts()));
         }
+        LCD.Write("Discrepancy: ");
+        LCD.WriteLine(rightEncoder->Counts() - leftEncoder->Counts());
         avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     }
     //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
-    LCD.WriteLine(i);
     wait(SHORT);
 }
 
@@ -408,6 +407,34 @@ void Robot::moveBackward(float finalX, float finalY, int power){
 	wait(SHORT);
 }
 
+/*
+ *Move forward a specific distance. Moves until the specified light level is seen, or time has expired.
+ */
+void Robot::moveBackwardToLight(int timeOut, int power, int lightLevel){
+    int motorPercent= power*(-1);
+
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
+    long timeStart = time_t();
+
+    leftMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(motorPercent);
+
+    int avgCounts = 0;
+    //Terminates if the CDS level is >= lightLevel, or if the timout is reached
+    while((checkCDS() > lightLevel)&&(time_t() - timeStart < timeOut)){
+        //normal run
+        if(avgCounts > 4){
+            rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
+        }
+        avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+    }
+    //stop wheel movement
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+    wait(SHORT);
+}
 
 /*
  *Move the motors forward for a specified amount of time.
@@ -747,9 +774,9 @@ void Robot::turnRightCheck(float degrees, char directionC, int direction){
     LCD.Write("Start: ");
     LCD.WriteLine(startDeg);
 
-    float finalDeg = startDeg + degrees;
-    if(finalDeg >= 180){
-        finalDeg -= 180;
+    float finalDeg = startDeg - degrees;
+    if(finalDeg < 0){
+        finalDeg += 180;
     }
 
     LCD.Write("Final: ");

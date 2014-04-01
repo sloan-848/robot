@@ -36,7 +36,6 @@ int main(void)
 
     LCD.Clear(CLEARCOLOR);
 
-    hal.validShafts();
     //Set initial arm value
     hal.setArmAngle(165,90);
 
@@ -83,8 +82,7 @@ int main(void)
 
     //turn to prep for next task
     //hal.turnRight(80);
-    hal.turnRightCheck(90,'x',1);
-    //hal.turnRightTime(2.3);
+    hal.turnRightCheck(80,'x',1);
 
 
     //move forward to next task
@@ -108,7 +106,7 @@ int main(void)
 
     //Get in position to pull pin
     //hal.moveBackward(8, hal.MEDIUM);  //EO - 3/23
-    hal.moveBackward(0,6,hal.MEDIUM);
+    hal.moveBackward(0,5.5,hal.MEDIUM);
 
     //hal.turnRight(89);
     hal.turnLeftToHeading(rightH);
@@ -164,7 +162,7 @@ int main(void)
     */
 
     //Move to to of ramp - V3.0
-    hal.moveBackward(3.0,hal.MEDIUM);
+    hal.moveBackward(6,hal.MEDIUM);
     hal.turnLeftCheck(90,'x',-1);
     //hal.turnLeft(90);
     hal.moveForward(6.0,hal.MEDIUM);
@@ -173,15 +171,9 @@ int main(void)
     //hal.turnRight(90);
 
 
-    LCD.WriteLine("I'm Going Straight!");
-    //Align to ramp
-    //hal.turnToHeading(straightHeading);
-
-
     //Move down ramp - PT 3/21
     LCD.WriteLine("Moving down the ramp.");
-    hal.moveBackward(22,hal.FAST);  //EO - 3/23
-
+    hal.moveBackwardToLight(10,hal.MEDIUM,30);  //TODO: adjust value of 30 in calibration
 
     //Check CDS color - PT 3/21
     LCD.WriteLine("Reading Light");
