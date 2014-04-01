@@ -36,13 +36,20 @@ int main(void)
 
     LCD.Clear(CLEARCOLOR);
 
+    hal.validShafts();
     //Set initial arm value
     hal.setArmAngle(165,90);
 
     LCD.WriteLine("Please put me on an edge");
     Sleep(2.0);
     while(!hal.getSwitchPress());
+
     float straightH = hal.getHeading();
+    float rightH = straightH + 90;
+    if(rightH >= 180){
+        rightH -= 180;
+    }
+
     Sleep(2.0);
     LCD.WriteLine("Tell me when you're ready!");
     Sleep(1.0);
@@ -67,7 +74,7 @@ int main(void)
     }
     hal.setArmAngle(165,170);
 
-    hal.timeBack(.9,hal.SLOW);
+    hal.timeBack(.5,hal.SLOW);
 
     //prep arm for next task
     hal.setArmAngle(167,121);
@@ -103,8 +110,10 @@ int main(void)
     //hal.moveBackward(8, hal.MEDIUM);  //EO - 3/23
     hal.moveBackward(0,6,hal.MEDIUM);
 
-    hal.turnRight(89);
-    hal.moveForward(6, hal.MEDIUM);  //EO - 3/23
+    //hal.turnRight(89);
+    hal.turnLeftToHeading(rightH);
+    //hal.turnRightCheck(90,'x',1);
+    hal.moveBackward(10, hal.MEDIUM);  //EO - 3/23
 
 
     /*
@@ -113,17 +122,22 @@ int main(void)
     hal.setArmAngle(0,67);
     */
 
-    //Prep for skid pickup
-    hal.turnLeft(45);
+    /*Move to skid V1.0
+    hal.turnLeftCheck(45,'y',1);
+    //hal.turnLeft(45);
     hal.moveForward(1.5,hal.MEDIUM);
-    hal.turnLeft(45);
+    //hal.turnLeft(45);
+    hal.turnLeftCheck(45,'y',1);
+    */
+
+    hal.turnRightToHeading(straightH);
 
     //Get ready to square up
     hal.timeForward(3.0,hal.SUPERFAST);
 
     hal.moveBackward(8,hal.MEDIUM);
 
-    hal.setArmAngle(20,10);  //Arm angle prep to pick up skid
+    hal.setArmAngle(20,5);  //Arm angle prep to pick up skid
     hal.timeForward(1.5, hal.FAST);  //EO - 3/23
     hal.setArmAngle(20,50);  //Arm angle to raise skid
 
@@ -151,9 +165,12 @@ int main(void)
 
     //Move to to of ramp - V3.0
     hal.moveBackward(3.0,hal.MEDIUM);
-    hal.turnLeft(90);
+    hal.turnLeftCheck(90,'x',-1);
+    //hal.turnLeft(90);
     hal.moveForward(6.0,hal.MEDIUM);
-    hal.turnRight(90);
+    hal.turnRightToHeading(straightH);
+    //hal.turnRightCheck(90,y,1);
+    //hal.turnRight(90);
 
 
     LCD.WriteLine("I'm Going Straight!");

@@ -376,7 +376,7 @@ void Robot::moveBackward(float finalX, float finalY, int power){
     rightEncoder->ResetCounts();
 
     leftMotor->SetPercent(motorPercent);
-    rightMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(motorPercent*.90);
 
     int avgCounts = 0;
 	
@@ -385,7 +385,7 @@ void Robot::moveBackward(float finalX, float finalY, int power){
 		//move until get to y coordinate
         while(!((abs(rps->Y()-initY) <= finalY+tolerance)&&(abs(rps->Y()-initY) >= finalY-tolerance))){
 			if(avgCounts > 4){
-				rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
+                rightMotor->SetPercent(motorPercent - 10 +(rightEncoder->Counts() - leftEncoder->Counts()));
 			}
 			avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
 		}  
@@ -867,4 +867,50 @@ bool Robot::validRPS(){
     }
 
     return working;
+}
+
+bool Robot::validShafts(){
+    bool finished = false;
+
+    int motorValue = 80;
+
+    while(!finished){
+        LCD.Clear(FEHLCD::Scarlet);
+        leftMotor->SetPercent(motorValue);
+        rightMotor->SetPercent(motorValue*.95);
+
+        leftEncoder->ResetCounts();
+        rightEncoder->ResetCounts();
+
+        int avgCounts = 0;
+        //while the average counts between the wheels are less than the final desired count
+        while(abs(avgCounts*1.0) < 150){
+            //normal run
+            if(avgCounts > 4){
+                if(motorValue < 0){
+                    rightMotor->SetPercent(motorValue - 10 +(leftEncoder->Counts() - rightEncoder->Counts() ));
+                }
+                else{
+                    rightMotor->SetPercent(motorValue*1.0+(rightEncoder->Counts() - leftEncoder->Counts()));
+                }
+            }
+            LCD.Write("Discrepancy: ");
+            LCD.WriteLine(rightEncoder->Counts() - leftEncoder->Counts());
+            avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+        }
+
+        //stop wheel movement
+        leftMotor->SetPercent(0);
+        rightMotor->SetPercent(0);
+
+        motorValue -= 20;
+        if(motorValue < 50){
+            motorValue = -40;
+        }
+        else if(motorValue < -80){
+            finished = true;
+        }
+    }
+
+    return finished;
 }

@@ -72,6 +72,7 @@ public:
 
     //Diagnostic Methods
     bool validRPS();
+    bool validShafts();
 
 
 
