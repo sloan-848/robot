@@ -29,7 +29,7 @@ public:
     void forwardToXPoint(float pointX, int power);
     void moveBackward(float distance, int power);
     void moveBackward(float distX, float distY, int power);
-    void moveBackwardToLight(int timeOut, int power, int lightLevel);
+    void moveBackwardToLight(float timeOut, int power, int lightLevel);
     void timeForward(float time, int power);
     void timeBack(float time, int power);
 
@@ -62,8 +62,8 @@ public:
 
     //Speed Constants
     int const static SLOW = 40;
-    int const static MEDIUM = 55;
-    int const static FAST = 65;
+    int const static MEDIUM = 65;
+    int const static FAST = 70;
     int const static SUPERFAST = 80;
     int const static MAX = 95;
 

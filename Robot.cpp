@@ -375,7 +375,7 @@ void Robot::moveBackward(float finalX, float finalY, int power){
     rightEncoder->ResetCounts();
 
     leftMotor->SetPercent(motorPercent);
-    rightMotor->SetPercent(motorPercent*.90);
+    rightMotor->SetPercent(motorPercent);
 
     int avgCounts = 0;
 	
@@ -384,7 +384,7 @@ void Robot::moveBackward(float finalX, float finalY, int power){
 		//move until get to y coordinate
         while(!((abs(rps->Y()-initY) <= finalY+tolerance)&&(abs(rps->Y()-initY) >= finalY-tolerance))){
 			if(avgCounts > 4){
-                rightMotor->SetPercent(motorPercent - 10 +(rightEncoder->Counts() - leftEncoder->Counts()));
+                rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
 			}
 			avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
 		}  
@@ -393,7 +393,7 @@ void Robot::moveBackward(float finalX, float finalY, int power){
 		//move until get to y coordinate
         while(!((abs(rps->X()-initX) <= finalX+tolerance)&&(abs(rps->X()-initX) >= finalX-tolerance))){
 			if(avgCounts > 4){
-				rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
+                rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
 			}
 			avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
 		}  
@@ -410,24 +410,24 @@ void Robot::moveBackward(float finalX, float finalY, int power){
 /*
  *Move forward a specific distance. Moves until the specified light level is seen, or time has expired.
  */
-void Robot::moveBackwardToLight(int timeOut, int power, int lightLevel){
+void Robot::moveBackwardToLight(float timeOut, int power, int lightLevel){
     int motorPercent= power*(-1);
 
     leftEncoder->ResetCounts();
     rightEncoder->ResetCounts();
 
-    long timeStart = time_t();
+    float startTime = TimeNow();
 
     leftMotor->SetPercent(motorPercent);
     rightMotor->SetPercent(motorPercent);
 
     int avgCounts = 0;
     //Terminates if the CDS level is >= lightLevel, or if the timout is reached
-    while((checkCDS() > lightLevel)&&(time_t() - timeStart < timeOut)){
-        //normal run
+    while((checkCDS() > lightLevel)&&((TimeNow() - startTime) < timeOut)){
         if(avgCounts > 4){
             rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
         }
+        LCD.WriteLine(TimeNow() - startTime);
         avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     }
     //stop wheel movement
@@ -731,24 +731,31 @@ void Robot::turnLeftCheck(float degrees, char directionC, int direction){
         int myY = getY();
         moveForward(.6,MEDIUM);
 
-        int correct;
         if(directionC == 'x'){
-            correct = direction/(getX() - myX);
+            if(direction > 0){
+                if(getX() > myX){
+                    finished = true;
+                }
+            }
+            else if(direction < 0){
+                if(getX() < myX){
+                    finished = true;
+                }
+            }
         }
         else if(directionC == 'y'){
-            correct = direction/(getY() - myY);
+            if(direction > 0){
+                if(getY() > myY){
+                    finished = true;
+                }
+            }
+            else if(direction < 0){
+                if(getY() < myY){
+                    finished = true;
+                }
+            }
         }
-        else{
-            LCD.WriteLine("Will sucks at coding!");
-        }
-
         moveBackward(.6,MEDIUM);
-        if(correct == 1){
-            finished = true;
-        }
-        else{
-            LCD.WriteLine("I did it wrong!");
-        }
     }
 
     LCD.Write("Actual Final: ");
