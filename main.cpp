@@ -22,10 +22,11 @@ int main(void)
     hal.setArmAngle(10,90);
     hal.setArmAngle(165,90);
 
-    //Calibrate straightH
+    //Calibrate straightH and ramp position
     LCD.WriteLine("Please put me on an edge");
     Sleep(2.0);
     while(!hal.getSwitchPress());
+    float rampX = hal.getX();
     float straightH = hal.getHeading();
     float rightH = straightH + 90;
     if(rightH >= 180){
@@ -84,10 +85,10 @@ int main(void)
     hal.moveBackward(1.0,hal.SLOW);
 
     //Move to top of ramp
-    hal.moveBackward(7.5,hal.MEDIUM);
+    hal.moveBackward(9,hal.MEDIUM);
     hal.turnLeftToHeading(rightH);
-    hal.moveForward(6.0,hal.MEDIUM);
-    hal.turnRightToHeading(straightH);
+    hal.forwardToXPoint(rampX+3,hal.MEDIUM);
+    hal.turnRightONE(90);
 
     //Move to light
     LCD.WriteLine("Moving down the ramp.");
@@ -157,7 +158,8 @@ int main(void)
     hal.moveForward(5.0,hal.MEDIUM);
     hal.moveBackward(5.0,hal.MEDIUM);
     hal.moveBackward(4.0, hal.MEDIUM);
-    hal.setArmAngle(20,165);
+    hal.setArmAngle(20,135);
+    hal.setArmAngle(116,135);
     hal.setArmAngle(116,165);
 
     //Square up, prep for ramp ascension

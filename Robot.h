@@ -38,6 +38,7 @@ public:
     void turnRightCheck(float degrees, char directionC, int direction);
     void turnRight(int degrees);
     void turnRightTime(float time);
+    void turnRightONE(float degrees);
     void turnLeftToHeading(float degree);
     void turnRightToHeading(float degree);
 
@@ -68,7 +69,7 @@ public:
     int const static MAX = 95;
 
     //Time Constants
-    float const static SHORT = .5;
+    float const static SHORT = .20;
     float const static LONG = 2.0;
 
     //Diagnostic Methods
@@ -104,8 +105,8 @@ private:
     int startLightValue;
     int scoopLightValue;
 
-    float offsetX;
-    float offsetY;
+    float initX;
+    float initY;
 
     //Private methods; used internally
 

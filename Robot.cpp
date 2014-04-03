@@ -427,7 +427,6 @@ void Robot::moveBackwardToLight(float timeOut, int power, int lightLevel){
         if(avgCounts > 4){
             rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
         }
-        LCD.WriteLine(TimeNow() - startTime);
         avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     }
     //stop wheel movement
@@ -440,9 +439,24 @@ void Robot::moveBackwardToLight(float timeOut, int power, int lightLevel){
  *Move the motors forward for a specified amount of time.
  */
 void Robot::timeForward(float time, int power){
+    leftEncoder->ResetCounts();
+    rightEncoder->ResetCounts();
+
     leftMotor->SetPercent(power);
     rightMotor->SetPercent(power-(power/15.0));
-    Sleep(time*1.0);
+
+    float startTime = TimeNow();
+    int avgCounts = 0;
+
+    //while the average counts between the wheels are less than the final desired count
+    while((TimeNow() - startTime) < time){
+        //normal run
+        if(avgCounts > 4){
+            rightMotor->SetPercent(power+2*(leftEncoder->Counts() - rightEncoder->Counts()));
+        }
+        avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
+    }
+
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
     wait(SHORT);
@@ -490,6 +504,9 @@ void Robot::turnLeft(int degrees){
 
     LCD.Write("Final: ");
     LCD.WriteLine(finalDeg);
+
+    float startTime = TimeNow();
+
     leftMotor->SetPercent((-1)*motorPercent);
     rightMotor->SetPercent(motorPercent);
 
@@ -500,7 +517,7 @@ void Robot::turnLeft(int degrees){
         Sleep(.5);
     }
 
-    while(!((getHeading() < (finalDeg + tolerance))&&( (finalDeg - tolerance) < getHeading())));
+    while(!((getHeading() < (finalDeg + tolerance))&&( (finalDeg - tolerance) < getHeading()))&&(TimeNow() - startTime < 10.0));
 
     //stop wheel movement
     leftMotor->SetPercent(0);
@@ -529,6 +546,47 @@ void Robot::turnRightTime(float time){
 }
 
 /*
+ *Turn a specific number of degrees with only one motor
+ */
+void Robot::turnRightONE(float degrees){
+    int motorPercent= 65;
+    int tolerance = 5;
+
+    rps->Enable();
+
+    float startDeg = getHeading();
+    LCD.Write("Start: ");
+    LCD.WriteLine(startDeg);
+
+    float finalDeg = startDeg-degrees;
+    if(finalDeg < 0){
+        finalDeg += 180;
+    }
+
+    LCD.Write("Final: ");
+    LCD.WriteLine(finalDeg);
+
+    float startTime = TimeNow();
+
+    leftMotor->SetPercent(motorPercent);
+    rightMotor->SetPercent(0);
+
+    if(degrees > 20){
+        Sleep(.75);
+    }
+    else{
+        Sleep(.5);
+    }
+
+    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading()))&&(TimeNow() - startTime < 8.0)){
+
+    }
+
+    leftMotor->SetPercent(0);
+    rightMotor->SetPercent(0);
+}
+
+/*
  *Turns the robot right for a certain number of degrees.
  *Uses RPS headings.
  */
@@ -550,9 +608,8 @@ void Robot::turnRight(int degrees){
     LCD.Write("Final: ");
     LCD.WriteLine(finalDeg);
 
-    int i = 0;
-    bool finished = false;
-    long timeStart = time_t();
+    float startTime = TimeNow();
+
     leftMotor->SetPercent(motorPercent);
     rightMotor->SetPercent((-1)*motorPercent);
 
@@ -563,15 +620,8 @@ void Robot::turnRight(int degrees){
         Sleep(.5);
     }
 
-    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading()))&&(!finished)){
-        i++;
-        if(i > 5){
-            if(timeStart - time_t() > (int)degrees/45.0){
-                LCD.WriteLine("I'm stuuuuuuuck!");
-                finished = true;
-            }
-            i = 0;
-        }
+    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading()))&&(TimeNow() - startTime < 10.0)){
+
     }
 
     //stop wheel movement
@@ -602,9 +652,7 @@ void Robot::turnLeftToHeading(float degree){
     LCD.Write("Final: ");
     LCD.WriteLine(degree);
 
-    int i = 0;
-    bool finished = false;
-    long timeStart = time_t();
+    float startTime = TimeNow();
     leftMotor->SetPercent((-1)*motorPercent);
     rightMotor->SetPercent(motorPercent);
 
@@ -615,16 +663,7 @@ void Robot::turnLeftToHeading(float degree){
         Sleep(.5);
     }
 
-    while(!((getHeading() < degree + tolerance)&&( degree - tolerance < getHeading()))&&(!finished)){
-        i++;
-        if(i > 5){
-            if(timeStart - time_t() >  5){
-                LCD.WriteLine("I'm stuuuuuuuck!");
-                finished = true;
-            }
-            i = 0;
-        }
-    }
+    while(!((getHeading() < degree + tolerance)&&( degree - tolerance < getHeading()))&&(TimeNow() - startTime < 6.0));
 
     //stop wheel movement
     leftMotor->SetPercent(0);
@@ -653,9 +692,7 @@ void Robot::turnRightToHeading(float degree){
     LCD.Write("Final: ");
     LCD.WriteLine(degree);
 
-    int i = 0;
-    bool finished = false;
-    long timeStart = time_t();
+    float startTime = TimeNow();
     leftMotor->SetPercent(motorPercent);
     rightMotor->SetPercent((-1)*motorPercent);
 
@@ -666,16 +703,7 @@ void Robot::turnRightToHeading(float degree){
         Sleep(.5);
     }
 
-    while(!((getHeading() < degree + tolerance)&&( degree - tolerance < getHeading()))&&(!finished)){
-        i++;
-        if(i > 5){
-            if(timeStart - time_t() >  5){
-                LCD.WriteLine("I'm stuuuuuuuck!");
-                finished = true;
-            }
-            i = 0;
-        }
-    }
+    while(!((getHeading() < degree + tolerance)&&( degree - tolerance < getHeading()))&&(TimeNow() - startTime < 8.0));
 
     //stop wheel movement
     leftMotor->SetPercent(0);
@@ -903,6 +931,9 @@ bool Robot::validRPS(){
     return working;
 }
 
+/*
+ *Checks to see if the shaft encoders are working.
+ */
 bool Robot::validShafts(){
     bool finished = false;
 
