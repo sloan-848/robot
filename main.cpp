@@ -87,8 +87,8 @@ int main(void)
     //Move to top of ramp
     hal.moveBackward(9,hal.MEDIUM);
     hal.turnLeftToHeading(rightH);
-    hal.forwardToXPoint(rampX+3,hal.MEDIUM);
-    hal.turnRightONE(90);
+    hal.forwardToXPoint(rampX+4.0,hal.MEDIUM);
+    hal.turnRightONE(straightH);
 
     //Move to light
     LCD.WriteLine("Moving down the ramp.");

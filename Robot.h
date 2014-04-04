@@ -38,7 +38,7 @@ public:
     void turnRightCheck(float degrees, char directionC, int direction);
     void turnRight(int degrees);
     void turnRightTime(float time);
-    void turnRightONE(float degrees);
+    void turnRightONE(float destHeading);
     void turnLeftToHeading(float degree);
     void turnRightToHeading(float degree);
 

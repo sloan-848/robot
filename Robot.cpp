@@ -317,7 +317,7 @@ void Robot::forwardToXPoint(float pointX, int power){
     while(!((getX() <= pointX+tolerance)&&(getX() >= pointX-tolerance))){
         //normal run
         if(avgCounts > 4){
-            rightMotor->SetPercent(motorPercent+(leftEncoder->Counts() - rightEncoder->Counts()));
+            rightMotor->SetPercent(motorPercent+2*(leftEncoder->Counts() - rightEncoder->Counts()));
         }
         avgCounts = (leftEncoder->Counts() + rightEncoder->Counts())/2.0;
     }
@@ -548,8 +548,8 @@ void Robot::turnRightTime(float time){
 /*
  *Turn a specific number of degrees with only one motor
  */
-void Robot::turnRightONE(float degrees){
-    int motorPercent= 65;
+void Robot::turnRightONE(float destHeading){
+    int motorPercent= 60;
     int tolerance = 5;
 
     rps->Enable();
@@ -558,32 +558,30 @@ void Robot::turnRightONE(float degrees){
     LCD.Write("Start: ");
     LCD.WriteLine(startDeg);
 
-    float finalDeg = startDeg-degrees;
-    if(finalDeg < 0){
-        finalDeg += 180;
-    }
 
     LCD.Write("Final: ");
-    LCD.WriteLine(finalDeg);
+    LCD.WriteLine(destHeading);
 
     float startTime = TimeNow();
-
     leftMotor->SetPercent(motorPercent);
     rightMotor->SetPercent(0);
 
-    if(degrees > 20){
+    if(abs(startDeg - destHeading) > 20){
         Sleep(.75);
     }
     else{
         Sleep(.5);
     }
 
-    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading()))&&(TimeNow() - startTime < 8.0)){
+    while(!((getHeading() < destHeading + tolerance)&&( destHeading - tolerance < getHeading()))&&(TimeNow() - startTime < 6.0));
 
-    }
-
+    //stop wheel movement
     leftMotor->SetPercent(0);
     rightMotor->SetPercent(0);
+
+    LCD.Write("Actual Final: ");
+    LCD.WriteLine(getHeading());
+    wait(SHORT);
 }
 
 /*
