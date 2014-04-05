@@ -92,7 +92,7 @@ int main(void)
 
     //Move to light
     LCD.WriteLine("Moving down the ramp.");
-    hal.moveBackwardToLight(7.5,hal.MEDIUM,30);  //TODO: adjust value of 30 in calibration
+    hal.moveBackwardToLight(7.5,hal.MEDIUM,38);  //TODO: adjust value of 30 in calibration
 
     //Read light
     LCD.WriteLine("Reading Light");

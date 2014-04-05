@@ -424,6 +424,7 @@ void Robot::moveBackwardToLight(float timeOut, int power, int lightLevel){
     int avgCounts = 0;
     //Terminates if the CDS level is >= lightLevel, or if the timout is reached
     while((checkCDS() > lightLevel)&&((TimeNow() - startTime) < timeOut)){
+        //normal run
         if(avgCounts > 4){
             rightMotor->SetPercent(motorPercent+(rightEncoder->Counts() - leftEncoder->Counts()));
         }
@@ -618,7 +619,7 @@ void Robot::turnRight(int degrees){
         Sleep(.5);
     }
 
-    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading()))&&(TimeNow() - startTime < 10.0)){
+    while(!((getHeading() < finalDeg + tolerance)&&( finalDeg - tolerance < getHeading()))&&(TimeNow() - startTime < 8.0)){
 
     }
 
