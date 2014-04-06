@@ -41,7 +41,8 @@ int main(void)
 
     //Wait for light
     LCD.WriteLine("Waiting for light.");
-    while(!hal.cdsStart());
+    float startTime = TimeNow();
+    while(!hal.cdsStart()&&(TimeNow() - startTime < 31));
     LCD.WriteLine("Lets do it!");
     hal.setArmAngle(165,170);
     hal.timeForward(1.0,hal.MEDIUM);
@@ -164,9 +165,10 @@ int main(void)
 
     //Square up, prep for ramp ascension
     hal.turnLeft(80);
-    hal.timeForward(2.0, hal.FAST);
+    hal.timeForward(3.0, hal.FAST);
     hal.moveBackward(11, hal.FAST);  //EO - 3/23
-    hal.turnRight(90);
+    hal.turnRightToHeading(straightH);
+    /*hal.turnRight(90);*/
 
     //Move up ramp and into ChargeZone
     hal.moveForward(31, hal.SUPERFAST);
